@@ -1,13 +1,16 @@
 const express = require('express');
 const cors = require('cors');
-
 const pool = require('./db');
+const authRouter = require('./routes/auth.routes');
+const tasksRouter = require('./routes/tasks.routes');
+const { authenticate } = require('./middleware/auth.middleware');
 
 const app = express();
 
 app.use(cors());
 app.use(express.json());
 
+// ── Public routes ─────────────────────────────────────────────────
 app.get('/health', (req, res) => {
     res.json({ status: 'OK' });
 });
@@ -21,79 +24,11 @@ app.get('/db-test', async (req, res) => {
     }
 });
 
-app.get('/tasks', async (req, res) => {
-    try {
-        const result = await pool.query('SELECT * FROM tasks ORDER BY created_at DESC');
-        res.json(result.rows);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+// Auth: POST /auth/register and POST /auth/login (no token required)
+app.use('/auth', authRouter);
 
-app.post('/tasks', async (req, res) => {
-    const { title, description } = req.body;
-
-    if (!title) {
-        return res.status(400).json({ error: 'Title is required' });
-    }
-
-    try {
-        const result = await pool.query(
-            'INSERT INTO tasks (title, description) VALUES ($1, $2) RETURNING *',
-            [title, description]
-        );
-        res.json(result.rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-app.put('/tasks/:id', async (req, res) => {
-    const { id } = req.params;
-    const { title, description } = req.body;
-
-    if (!title) {
-        return res.status(400).json({ error: 'Title is required' });
-    }
-
-    try {
-        const result = await pool.query(
-            `UPDATE tasks
-             SET title = $1,
-                 description = $2,
-                 updated_at = NOW()
-             WHERE id = $3
-             RETURNING *`,
-            [title, description, id]
-        );
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Task not found' });
-        }
-
-        res.json(result.rows[0]);
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
-
-app.delete('/tasks/:id', async (req, res) => {
-    const { id } = req.params;
-
-    try {
-        const result = await pool.query(
-            'DELETE FROM tasks WHERE id = $1 RETURNING *',
-            [id]
-        );
-
-        if (result.rows.length === 0) {
-            return res.status(404).json({ error: 'Task not found' });
-        }
-
-        res.status(204).send();
-    } catch (err) {
-        res.status(500).json({ error: err.message });
-    }
-});
+// ── Protected routes ──────────────────────────────────────────────
+// authenticate verifies JWT and sets req.user before every task handler
+app.use('/tasks', authenticate, tasksRouter);
 
 module.exports = app;
