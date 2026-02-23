@@ -1,4 +1,5 @@
 const jwt = require('jsonwebtoken');
+const crypto = require('crypto');
 
 const ACCESS_SECRET = process.env.ACCESS_TOKEN_SECRET;
 const REFRESH_SECRET = process.env.REFRESH_TOKEN_SECRET;
@@ -29,9 +30,15 @@ function verifyRefreshToken(token) {
     return jwt.verify(token, REFRESH_SECRET);
 }
 
+function hashToken(token) {
+    return crypto.createHash('sha256').update(token).digest('hex');
+}
+
 module.exports = {
     generateAccessToken,
     generateRefreshToken,
     verifyAccessToken,
     verifyRefreshToken,
+    hashToken,
 };
+
