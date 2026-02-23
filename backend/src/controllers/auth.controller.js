@@ -1,19 +1,16 @@
 const authService = require('../services/auth.service');
-const { verifyRefreshToken, generateAccessToken } = require('../utils/token');
-const usersService = require('../services/users.service');
 const logger = require('../utils/logger');
 
 const REFRESH_COOKIE = 'refreshToken';
 const COOKIE_OPTIONS = {
     httpOnly: true,
-    secure: false,       // set to true in production (HTTPS)
+    secure: false,      // set to true in production (HTTPS)
     sameSite: 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
 };
 
 async function register(req, res, next) {
     try {
-        // req.body already validated by Zod middleware
         const { email, password } = req.body;
         const { user, accessToken, refreshToken } = await authService.register(email, password);
         res.cookie(REFRESH_COOKIE, refreshToken, COOKIE_OPTIONS);
@@ -37,27 +34,35 @@ async function login(req, res, next) {
 }
 
 async function refresh(req, res, next) {
-    const token = req.cookies?.[REFRESH_COOKIE];
+    const rawToken = req.cookies?.[REFRESH_COOKIE];
 
-    if (!token) {
+    if (!rawToken) {
         return res.status(401).json({ success: false, error: 'No refresh token provided' });
     }
 
     try {
-        const payload = verifyRefreshToken(token);
-        const user = await usersService.findUserById(payload.id);
-        if (!user) {
-            return res.status(401).json({ success: false, error: 'User not found' });
-        }
-        const accessToken = generateAccessToken(user);
+        const { accessToken, refreshToken: newRefreshToken } = await authService.rotateRefreshToken(rawToken);
+        // Set the NEW rotated refresh token cookie — old one is now revoked in DB
+        res.cookie(REFRESH_COOKIE, newRefreshToken, COOKIE_OPTIONS);
         res.json({ success: true, data: { accessToken } });
     } catch (err) {
+        // Clear cookie on any refresh failure (expired, reuse, invalid)
         res.clearCookie(REFRESH_COOKIE);
-        res.status(401).json({ success: false, error: 'Invalid or expired refresh token' });
+        // Pass to global error handler (already has the right status on err.status)
+        next(err);
     }
 }
 
-async function logout(req, res) {
+async function logout(req, res, next) {
+    const rawToken = req.cookies?.[REFRESH_COOKIE];
+    try {
+        if (rawToken) {
+            await authService.revokeRefreshToken(rawToken);
+        }
+    } catch (err) {
+        // Don't block logout even if DB revocation fails
+        logger.warn(`Logout token revocation failed: ${err.message}`);
+    }
     res.clearCookie(REFRESH_COOKIE);
     res.json({ success: true, data: { message: 'Logged out successfully' } });
 }
