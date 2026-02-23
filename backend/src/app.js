@@ -5,35 +5,39 @@ const pool = require('./db');
 const authRouter = require('./routes/auth.routes');
 const tasksRouter = require('./routes/tasks.routes');
 const { authenticate } = require('./middleware/auth.middleware');
+const errorMiddleware = require('./middleware/error.middleware');
 
 const app = express();
 
-// ── Middleware ────────────────────────────────────────────────────
+// ── Core middleware ───────────────────────────────────────────────
 app.use(cors({
-    origin: 'http://localhost:5173',   // Vite dev server
-    credentials: true,                 // Allow cookies to be sent cross-origin
+    origin: 'http://localhost:5173',
+    credentials: true,
 }));
 app.use(express.json());
-app.use(cookieParser());               // Parse httpOnly refresh token cookie
+app.use(cookieParser());
 
 // ── Public routes ─────────────────────────────────────────────────
 app.get('/health', (req, res) => {
-    res.json({ status: 'OK' });
+    res.json({ success: true, data: { status: 'OK' } });
 });
 
-app.get('/db-test', async (req, res) => {
+app.get('/db-test', async (req, res, next) => {
     try {
         const result = await pool.query('SELECT NOW()');
-        res.json(result.rows[0]);
+        res.json({ success: true, data: result.rows[0] });
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        next(err);
     }
 });
 
-// Auth: register, login, refresh, logout (all public — no token required)
+// Auth: register, login, refresh, logout (all public)
 app.use('/auth', authRouter);
 
 // ── Protected routes ──────────────────────────────────────────────
 app.use('/tasks', authenticate, tasksRouter);
+
+// ── Global error handler (must be last) ──────────────────────────
+app.use(errorMiddleware);
 
 module.exports = app;
