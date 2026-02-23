@@ -9,10 +9,7 @@ function TaskForm({ onCreated }) {
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!title.trim()) {
-            setError('Title is required');
-            return;
-        }
+        if (!title.trim()) { setError('Title is required'); return; }
         setError('');
         setLoading(true);
         try {

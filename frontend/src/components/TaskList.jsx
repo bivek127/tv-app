@@ -9,10 +9,7 @@ function TaskItem({ task, onRefresh }) {
     const [error, setError] = useState('');
 
     const handleSave = async () => {
-        if (!title.trim()) {
-            setError('Title is required');
-            return;
-        }
+        if (!title.trim()) { setError('Title is required'); return; }
         setError('');
         setLoading(true);
         try {
@@ -50,24 +47,11 @@ function TaskItem({ task, onRefresh }) {
             {editing ? (
                 <div className="task-edit">
                     {error && <p className="error">{error}</p>}
-                    <input
-                        value={title}
-                        onChange={(e) => setTitle(e.target.value)}
-                        placeholder="Title *"
-                    />
-                    <textarea
-                        value={description}
-                        onChange={(e) => setDescription(e.target.value)}
-                        rows={2}
-                        placeholder="Description"
-                    />
+                    <input value={title} onChange={(e) => setTitle(e.target.value)} placeholder="Title *" />
+                    <textarea value={description} onChange={(e) => setDescription(e.target.value)} rows={2} placeholder="Description" />
                     <div className="task-actions">
-                        <button onClick={handleSave} disabled={loading}>
-                            {loading ? 'Saving…' : 'Save'}
-                        </button>
-                        <button onClick={handleCancel} className="btn-secondary">
-                            Cancel
-                        </button>
+                        <button onClick={handleSave} disabled={loading}>{loading ? 'Saving…' : 'Save'}</button>
+                        <button onClick={handleCancel} className="btn-secondary">Cancel</button>
                     </div>
                 </div>
             ) : (
@@ -77,9 +61,7 @@ function TaskItem({ task, onRefresh }) {
                         {task.description && <p>{task.description}</p>}
                     </div>
                     <div className="task-actions">
-                        <button onClick={() => setEditing(true)} className="btn-secondary">
-                            Edit
-                        </button>
+                        <button onClick={() => setEditing(true)} className="btn-secondary">Edit</button>
                         <button onClick={handleDelete} className="btn-danger" disabled={loading}>
                             {loading ? '…' : 'Delete'}
                         </button>
@@ -91,15 +73,10 @@ function TaskItem({ task, onRefresh }) {
 }
 
 function TaskList({ tasks, onRefresh }) {
-    if (tasks.length === 0) {
-        return <p className="empty">No tasks yet. Add one above!</p>;
-    }
-
+    if (tasks.length === 0) return <p className="empty">No tasks yet. Add one above!</p>;
     return (
         <ul className="task-list">
-            {tasks.map((task) => (
-                <TaskItem key={task.id} task={task} onRefresh={onRefresh} />
-            ))}
+            {tasks.map((task) => <TaskItem key={task.id} task={task} onRefresh={onRefresh} />)}
         </ul>
     );
 }
