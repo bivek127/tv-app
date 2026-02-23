@@ -1,18 +1,8 @@
 const usersService = require('../services/users.service');
 const bcrypt = require('bcrypt');
-const jwt = require('jsonwebtoken');
+const { generateAccessToken, generateRefreshToken } = require('../utils/token');
 
 const SALT_ROUNDS = 10;
-const JWT_SECRET = process.env.JWT_SECRET;
-const JWT_EXPIRES_IN = '7d';
-
-function signToken(user) {
-    return jwt.sign(
-        { id: user.id, email: user.email },
-        JWT_SECRET,
-        { expiresIn: JWT_EXPIRES_IN }
-    );
-}
 
 async function register(email, password) {
     const existing = await usersService.findUserByEmail(email);
@@ -24,8 +14,10 @@ async function register(email, password) {
 
     const passwordHash = await bcrypt.hash(password, SALT_ROUNDS);
     const user = await usersService.createUser(email, passwordHash);
-    const token = signToken(user);
-    return { user, token };
+
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
+    return { user, accessToken, refreshToken };
 }
 
 async function login(email, password) {
@@ -43,10 +35,10 @@ async function login(email, password) {
         throw err;
     }
 
-    const token = signToken(user);
-    // Never return password_hash to the caller
+    const accessToken = generateAccessToken(user);
+    const refreshToken = generateRefreshToken(user);
     const { password_hash, ...safeUser } = user;
-    return { user: safeUser, token };
+    return { user: safeUser, accessToken, refreshToken };
 }
 
 module.exports = { register, login };
