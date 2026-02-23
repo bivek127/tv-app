@@ -1,5 +1,6 @@
 const express = require('express');
 const cors = require('cors');
+const cookieParser = require('cookie-parser');
 const pool = require('./db');
 const authRouter = require('./routes/auth.routes');
 const tasksRouter = require('./routes/tasks.routes');
@@ -7,8 +8,13 @@ const { authenticate } = require('./middleware/auth.middleware');
 
 const app = express();
 
-app.use(cors());
+// ── Middleware ────────────────────────────────────────────────────
+app.use(cors({
+    origin: 'http://localhost:5173',   // Vite dev server
+    credentials: true,                 // Allow cookies to be sent cross-origin
+}));
 app.use(express.json());
+app.use(cookieParser());               // Parse httpOnly refresh token cookie
 
 // ── Public routes ─────────────────────────────────────────────────
 app.get('/health', (req, res) => {
@@ -24,11 +30,10 @@ app.get('/db-test', async (req, res) => {
     }
 });
 
-// Auth: POST /auth/register and POST /auth/login (no token required)
+// Auth: register, login, refresh, logout (all public — no token required)
 app.use('/auth', authRouter);
 
 // ── Protected routes ──────────────────────────────────────────────
-// authenticate verifies JWT and sets req.user before every task handler
 app.use('/tasks', authenticate, tasksRouter);
 
 module.exports = app;

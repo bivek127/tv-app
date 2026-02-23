@@ -1,23 +1,19 @@
 import { createContext, useContext, useState } from 'react';
-import apiClient from '../lib/apiClient';
-
-const TOKEN_KEY = 'tv_token';
+import apiClient, { setToken, removeToken, TOKEN_KEY } from '../lib/apiClient';
 
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-    const [token, setToken] = useState(() => localStorage.getItem(TOKEN_KEY));
+    // Initialise from localStorage so page refresh keeps user logged in
+    const [accessToken, setAccessToken] = useState(
+        () => localStorage.getItem(TOKEN_KEY)
+    );
 
-    const isAuthenticated = Boolean(token);
+    const isAuthenticated = Boolean(accessToken);
 
-    const persistToken = (newToken) => {
-        localStorage.setItem(TOKEN_KEY, newToken);
-        setToken(newToken);
-    };
-
-    const clearToken = () => {
-        localStorage.removeItem(TOKEN_KEY);
-        setToken(null);
+    const persistToken = (token) => {
+        setToken(token);
+        setAccessToken(token);
     };
 
     const login = async (email, password) => {
@@ -25,7 +21,7 @@ export function AuthProvider({ children }) {
             method: 'POST',
             body: JSON.stringify({ email, password }),
         });
-        persistToken(data.token);
+        persistToken(data.accessToken);
         return data;
     };
 
@@ -34,16 +30,24 @@ export function AuthProvider({ children }) {
             method: 'POST',
             body: JSON.stringify({ email, password }),
         });
-        persistToken(data.token);
+        persistToken(data.accessToken);
         return data;
     };
 
-    const logout = () => {
-        clearToken();
+    const logout = async () => {
+        try {
+            // Tell the server to clear the httpOnly refresh token cookie
+            await apiClient('/auth/logout', { method: 'POST' });
+        } catch {
+            // Ignore errors — we still clear locally
+        } finally {
+            removeToken();
+            setAccessToken(null);
+        }
     };
 
     return (
-        <AuthContext.Provider value={{ token, isAuthenticated, login, register, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, register, logout }}>
             {children}
         </AuthContext.Provider>
     );

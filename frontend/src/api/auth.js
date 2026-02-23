@@ -1,5 +1,5 @@
-// Token utilities — still exported for use in apiClient and AuthContext
-export const TOKEN_KEY = 'tv_token';
+// Token utilities — used by apiClient and AuthContext
+export const TOKEN_KEY = 'tv_access_token';
 
 export function getToken() {
     return localStorage.getItem(TOKEN_KEY);

@@ -1,6 +1,4 @@
-const jwt = require('jsonwebtoken');
-
-const JWT_SECRET = process.env.JWT_SECRET;
+const { verifyAccessToken } = require('../utils/token');
 
 function authenticate(req, res, next) {
     const authHeader = req.headers['authorization'];
@@ -9,14 +7,14 @@ function authenticate(req, res, next) {
         return res.status(401).json({ error: 'Authorization header missing or malformed' });
     }
 
-    const token = authHeader.slice(7); // strip "Bearer "
+    const token = authHeader.slice(7);
 
     try {
-        const payload = jwt.verify(token, JWT_SECRET);
+        const payload = verifyAccessToken(token);
         req.user = { id: payload.id, email: payload.email };
         next();
     } catch (err) {
-        return res.status(401).json({ error: 'Invalid or expired token' });
+        return res.status(401).json({ error: 'Invalid or expired access token' });
     }
 }
 
