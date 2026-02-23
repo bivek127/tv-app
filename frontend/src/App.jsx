@@ -1,22 +1,19 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
-import { getToken, logout } from './api/auth';
+import { useAuth } from './context/AuthContext';
 import { getTasks } from './api/tasks';
 import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
+import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import './App.css';
 
-// ── Protected route wrapper ────────────────────────────────────────
-function RequireAuth({ children }) {
-  return getToken() ? children : <Navigate to="/login" replace />;
-}
-
-// ── Main dashboard ─────────────────────────────────────────────────
+// ── Task dashboard (only rendered when authenticated) ──────────────
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
   const [error, setError] = useState('');
+  const { logout } = useAuth();
   const navigate = useNavigate();
 
   const refreshTasks = async () => {
@@ -24,8 +21,8 @@ function Dashboard() {
       const data = await getTasks();
       setTasks(data);
       setError('');
-    } catch {
-      setError('Could not load tasks. Is the backend running?');
+    } catch (err) {
+      setError(err.message || 'Could not load tasks.');
     }
   };
 
@@ -63,12 +60,11 @@ function App() {
       <Route
         path="/"
         element={
-          <RequireAuth>
+          <ProtectedRoute>
             <Dashboard />
-          </RequireAuth>
+          </ProtectedRoute>
         }
       />
-      {/* Catch-all: redirect unknown paths to home */}
       <Route path="*" element={<Navigate to="/" replace />} />
     </Routes>
   );
