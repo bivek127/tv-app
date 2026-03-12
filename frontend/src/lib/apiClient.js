@@ -97,14 +97,16 @@ async function apiClient(path, options = {}) {
         }
     }
 
-    const data = await parseResponse(res);
+    const json = await parseResponse(res);
 
     if (!res.ok) {
-        const message = (data && data.error) || `Request failed with status ${res.status}`;
+        const message = (json && json.error) || `Request failed with status ${res.status}`;
         throw new Error(message);
     }
 
-    return data;
+    // Unwrap standardized response envelope: { success: true, data: {...} }
+    // So callers get the inner data directly (e.g. { accessToken, user })
+    return json && json.data !== undefined ? json.data : json;
 }
 
 export default apiClient;
