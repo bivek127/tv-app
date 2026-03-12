@@ -16,7 +16,7 @@ async function findUserByEmail(email) {
  */
 async function findUserById(id) {
     const result = await pool.query(
-        'SELECT id, email, provider, created_at FROM users WHERE id = $1',
+        'SELECT id, email, provider, role, created_at FROM users WHERE id = $1',
         [id]
     );
     return result.rows[0] || null;
@@ -29,7 +29,7 @@ async function createUser(email, passwordHash) {
     const result = await pool.query(
         `INSERT INTO users (email, password_hash, provider)
          VALUES ($1, $2, 'local')
-         RETURNING id, email, provider, created_at`,
+         RETURNING id, email, provider, role, created_at`,
         [email, passwordHash]
     );
     return result.rows[0];
@@ -54,4 +54,25 @@ async function findOrCreateOAuthUser(email, provider, providerId) {
     return result.rows[0];
 }
 
-module.exports = { findUserByEmail, findUserById, createUser, findOrCreateOAuthUser };
+/**
+ * Get all users (admin only).
+ */
+async function getAllUsers() {
+    const result = await pool.query(
+        'SELECT id, email, role, created_at FROM users ORDER BY created_at DESC'
+    );
+    return result.rows;
+}
+
+/**
+ * Delete a user by id (admin only).
+ */
+async function deleteUserById(id) {
+    const result = await pool.query(
+        'DELETE FROM users WHERE id = $1 RETURNING id, email, role',
+        [id]
+    );
+    return result.rows[0] || null;
+}
+
+module.exports = { findUserByEmail, findUserById, createUser, findOrCreateOAuthUser, getAllUsers, deleteUserById };

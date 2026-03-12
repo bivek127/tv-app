@@ -11,7 +11,7 @@ function authenticate(req, res, next) {
 
     try {
         const payload = verifyAccessToken(token);
-        req.user = { id: payload.id, email: payload.email };
+        req.user = { id: payload.id, email: payload.email, role: payload.role };
         next();
     } catch (err) {
         return res.status(401).json({ error: 'Invalid or expired access token' });

@@ -4,7 +4,9 @@ const cookieParser = require('cookie-parser');
 const pool = require('./db');
 const authRouter = require('./routes/auth.routes');
 const tasksRouter = require('./routes/tasks.routes');
+const adminRouter = require('./routes/admin.routes');
 const { authenticate } = require('./middleware/auth.middleware');
+const requireRole = require('./middleware/requireRole');
 const errorMiddleware = require('./middleware/error.middleware');
 
 const app = express();
@@ -36,6 +38,7 @@ app.use('/auth', authRouter);
 
 // ── Protected routes ──────────────────────────────────────────────
 app.use('/tasks', authenticate, tasksRouter);
+app.use('/admin', authenticate, requireRole('admin'), adminRouter);
 
 // ── Global error handler (must be last) ──────────────────────────
 app.use(errorMiddleware);
