@@ -4,6 +4,7 @@ const cookieParser = require('cookie-parser');
 const pool = require('./db');
 const authRouter = require('./routes/auth.routes');
 const tasksRouter = require('./routes/tasks.routes');
+const activityRouter = require('./routes/activity.routes');
 const { authenticate } = require('./middleware/auth.middleware');
 const errorMiddleware = require('./middleware/error.middleware');
 
@@ -11,7 +12,7 @@ const app = express();
 
 // ── Core middleware ───────────────────────────────────────────────
 app.use(cors({
-    origin: 'http://localhost:5173',
+    origin: process.env.FRONTEND_URL || 'http://localhost:5173',
     credentials: true,
 }));
 app.use(express.json());
@@ -36,6 +37,7 @@ app.use('/auth', authRouter);
 
 // ── Protected routes ──────────────────────────────────────────────
 app.use('/tasks', authenticate, tasksRouter);
+app.use('/activity', authenticate, activityRouter);
 
 // ── Global error handler (must be last) ──────────────────────────
 app.use(errorMiddleware);
