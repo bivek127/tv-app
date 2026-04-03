@@ -1,11 +1,13 @@
 const authService = require('../services/auth.service');
 const logger = require('../utils/logger');
+const { logActivity } = require('../services/activity.service');
 
 const REFRESH_COOKIE = 'refreshToken';
+const isProduction = process.env.NODE_ENV === 'production';
 const COOKIE_OPTIONS = {
     httpOnly: true,
-    secure: false,      // set to true in production (HTTPS)
-    sameSite: 'lax',
+    secure: isProduction,
+    sameSite: isProduction ? 'none' : 'lax',
     maxAge: 7 * 24 * 60 * 60 * 1000, // 7 days in ms
 };
 
@@ -27,6 +29,7 @@ async function login(req, res, next) {
         const { user, accessToken, refreshToken } = await authService.login(email, password);
         res.cookie(REFRESH_COOKIE, refreshToken, COOKIE_OPTIONS);
         logger.info(`User logged in: ${email}`);
+        logActivity({ userId: user.id, action: 'user_login' });
         res.json({ success: true, data: { user, accessToken } });
     } catch (err) {
         next(err);
@@ -64,6 +67,14 @@ async function logout(req, res, next) {
         logger.warn(`Logout token revocation failed: ${err.message}`);
     }
     res.clearCookie(REFRESH_COOKIE);
+    // Best effort: log logout using refresh token's user_id if available
+    if (rawToken) {
+        try {
+            const { verifyRefreshToken } = require('../utils/token');
+            const payload = verifyRefreshToken(rawToken);
+            logActivity({ userId: payload.id, action: 'user_logout' });
+        } catch { /* token already invalid, skip logging */ }
+    }
     res.json({ success: true, data: { message: 'Logged out successfully' } });
 }
 
