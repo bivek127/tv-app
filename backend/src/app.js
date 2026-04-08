@@ -8,6 +8,8 @@ const activityRouter = require('./routes/activity.routes');
 const { authenticate } = require('./middleware/auth.middleware');
 const errorMiddleware = require('./middleware/error.middleware');
 
+const passport = require('./config/passport');
+
 const app = express();
 
 // ── Core middleware ───────────────────────────────────────────────
@@ -17,6 +19,7 @@ app.use(cors({
 }));
 app.use(express.json());
 app.use(cookieParser());
+app.use(passport.initialize());
 
 // ── Public routes ─────────────────────────────────────────────────
 app.get('/health', (req, res) => {
