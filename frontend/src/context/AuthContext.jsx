@@ -34,6 +34,10 @@ export function AuthProvider({ children }) {
         return data;
     };
 
+    const loginWithToken = (token) => {
+        persistToken(token);
+    };
+
     const logout = async () => {
         try {
             // Tell the server to clear the httpOnly refresh token cookie
@@ -47,7 +51,7 @@ export function AuthProvider({ children }) {
     };
 
     return (
-        <AuthContext.Provider value={{ isAuthenticated, login, register, logout }}>
+        <AuthContext.Provider value={{ isAuthenticated, login, loginWithToken, register, logout }}>
             {children}
         </AuthContext.Provider>
     );
