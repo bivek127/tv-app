@@ -14,14 +14,23 @@ const loginSchema = z.object({
 
 // ── Tasks ─────────────────────────────────────────────────────────
 
+const PRIORITIES = ['low', 'medium', 'high', 'urgent'];
+const STATUSES   = ['todo', 'in_progress', 'done'];
+
 const createTaskSchema = z.object({
-    title: z.string().min(1, 'Title is required').max(255, 'Title too long'),
+    title:       z.string().min(1, 'Title is required').max(255, 'Title too long'),
     description: z.string().max(2000, 'Description too long').optional(),
+    priority:    z.enum(PRIORITIES).default('medium'),
+    status:      z.enum(STATUSES).default('todo'),
+    due_date:    z.string().date('Invalid date format').nullable().optional(),
 });
 
 const updateTaskSchema = z.object({
-    title: z.string().min(1, 'Title is required').max(255, 'Title too long'),
+    title:       z.string().min(1, 'Title is required').max(255, 'Title too long'),
     description: z.string().max(2000, 'Description too long').optional(),
+    priority:    z.enum(PRIORITIES).default('medium'),
+    status:      z.enum(STATUSES).default('todo'),
+    due_date:    z.string().date('Invalid date format').nullable().optional(),
 });
 
 // ── Params ────────────────────────────────────────────────────────

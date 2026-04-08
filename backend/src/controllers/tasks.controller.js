@@ -14,8 +14,8 @@ async function getTasks(req, res, next) {
 
 async function createTask(req, res, next) {
     try {
-        const { title, description } = req.body;
-        const task = await tasksService.createTask(req.user.id, title, description);
+        const { title, description, priority, status, due_date } = req.body;
+        const task = await tasksService.createTask(req.user.id, title, description, priority, status, due_date);
         logActivity({ userId: req.user.id, action: 'task_created', entityType: 'task', entityId: task.id });
         res.status(201).json({ success: true, data: task });
     } catch (err) {
@@ -26,8 +26,8 @@ async function createTask(req, res, next) {
 async function updateTask(req, res, next) {
     try {
         const { id } = req.params;
-        const { title, description } = req.body;
-        const task = await tasksService.updateTask(id, req.user.id, title, description);
+        const { title, description, priority, status, due_date } = req.body;
+        const task = await tasksService.updateTask(id, req.user.id, title, description, priority, status, due_date);
         if (!task) {
             return res.status(404).json({ success: false, error: 'Task not found' });
         }

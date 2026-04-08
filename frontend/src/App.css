@@ -237,3 +237,68 @@ button:hover:not(:disabled) {
   color: #5e6c84;
   font-size: 0.9rem;
 }
+
+/* ── Task form row (priority / status / due date) ────────────────── */
+.task-form-row {
+  display: flex;
+  gap: 0.5rem;
+  flex-wrap: wrap;
+}
+
+.task-form-row select,
+.task-form-row input[type="date"] {
+  flex: 1;
+  min-width: 120px;
+}
+
+select {
+  padding: 0.5rem 0.75rem;
+  border: 1px solid #dfe1e6;
+  border-radius: 5px;
+  font-size: 0.9rem;
+  font-family: inherit;
+  background: #fafbfc;
+  cursor: pointer;
+}
+
+select:focus {
+  outline: none;
+  border-color: #0052cc;
+}
+
+/* ── Task meta badges ────────────────────────────────────────────── */
+.task-meta {
+  display: flex;
+  gap: 0.4rem;
+  flex-wrap: wrap;
+  margin-top: 0.5rem;
+}
+
+.badge {
+  font-size: 0.72rem;
+  font-weight: 600;
+  padding: 0.2rem 0.55rem;
+  border-radius: 4px;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+/* Priority badges */
+.priority-badge.priority-low    { background: #e3fcef; color: #006644; }
+.priority-badge.priority-medium { background: #fffae6; color: #7a5c00; }
+.priority-badge.priority-high   { background: #fff0e6; color: #bf3600; }
+.priority-badge.priority-urgent { background: #ffd5d5; color: #8b0000; }
+
+/* Status badges */
+.status-badge.status-todo        { background: #f4f5f7; color: #5e6c84; }
+.status-badge.status-in_progress { background: #deebff; color: #0747a6; }
+.status-badge.status-done        { background: #e3fcef; color: #006644; }
+
+/* Due date badge */
+.badge.due-date { background: #f4f5f7; color: #344563; }
+
+/* Priority left border on task item */
+.task-item.priority-low    { border-left: 3px solid #36b37e; }
+.task-item.priority-medium { border-left: 3px solid #ffab00; }
+.task-item.priority-high   { border-left: 3px solid #ff5630; }
+.task-item.priority-urgent { border-left: 3px solid #bf2600; }
