@@ -106,4 +106,4 @@ async function revokeRefreshToken(rawToken) {
     await refreshTokensService.revokeByHash(tokenHash);
 }
 
-module.exports = { register, login, rotateRefreshToken, revokeRefreshToken };
+module.exports = { issueTokens, register, login, rotateRefreshToken, revokeRefreshToken };
