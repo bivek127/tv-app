@@ -3,8 +3,8 @@
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
-  background: var(--card-bg, #fff);
-  border: 1px solid var(--border, #dfe1e6);
+  background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 0.75rem 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -17,47 +17,47 @@
 
 .filter-select {
   padding: 0.5rem 0.75rem;
-  border: 1px solid var(--border, #dfe1e6);
+  border: 1px solid var(--border);
   border-radius: 5px;
   font-size: 0.85rem;
   font-family: inherit;
-  background: var(--surface, #fafbfc);
-  color: var(--text-primary, #172b4d);
+  background: var(--surface);
+  color: var(--text-primary);
   cursor: pointer;
   min-width: 130px;
 }
 
 .filter-select:focus {
   outline: none;
-  border-color: var(--primary-blue, #0052cc);
+  border-color: var(--primary-blue);
 }
 
 .filter-clear {
   padding: 0.5rem 0.75rem;
-  background: var(--surface, #f4f5f7);
-  color: var(--text-primary, #344563);
-  border: 1px solid var(--border, #dfe1e6);
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
   border-radius: 5px;
   font-size: 0.8rem;
   cursor: pointer;
 }
 
 .filter-clear:hover {
-  background: var(--bg, #ebecf0);
+  background: var(--bg);
 }
 
 .filter-count {
   font-size: 0.8rem;
-  color: var(--text-secondary, #5e6c84);
+  color: var(--text-secondary);
   white-space: nowrap;
 }
 
 .btn-export {
   padding: 0.4rem 0.75rem;
   font-size: 0.8rem;
-  background: var(--surface, #f4f5f7);
-  color: var(--text-primary, #344563);
-  border: 1px solid var(--border, #dfe1e6);
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
   border-radius: 5px;
   cursor: pointer;
   white-space: nowrap;
@@ -65,5 +65,5 @@
 }
 
 .btn-export:hover:not(:disabled) {
-  background: var(--bg, #ebecf0);
+  background: var(--bg);
 }

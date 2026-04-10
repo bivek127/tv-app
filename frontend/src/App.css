@@ -4,11 +4,11 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  background: #f4f5f7;
+  background: var(--bg);
 }
 
 .auth-card {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 10px;
   padding: 2.5rem 2rem;
   width: 100%;
@@ -22,7 +22,7 @@
 .auth-logo {
   font-size: 1.6rem;
   font-weight: 700;
-  color: #0052cc;
+  color: var(--primary-blue);
   text-align: center;
   letter-spacing: 0.05em;
 }
@@ -30,7 +30,7 @@
 .auth-card h2 {
   font-size: 1.1rem;
   font-weight: 600;
-  color: #172b4d;
+  color: var(--text-primary);
   text-align: center;
 }
 
@@ -43,11 +43,11 @@
 .auth-switch {
   text-align: center;
   font-size: 0.875rem;
-  color: #5e6c84;
+  color: var(--text-secondary);
 }
 
 .auth-switch a {
-  color: #0052cc;
+  color: var(--primary-blue);
   text-decoration: none;
   font-weight: 500;
 }
@@ -60,7 +60,7 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  color: #97a0af;
+  color: var(--text-muted);
   font-size: 0.8rem;
 }
 
@@ -69,7 +69,7 @@
   content: '';
   flex: 1;
   height: 1px;
-  background: #dfe1e6;
+  background: var(--border);
 }
 
 .btn-google {
@@ -79,9 +79,9 @@
   gap: 0.6rem;
   width: 100%;
   padding: 0.6rem 1rem;
-  background: #fff;
-  color: #344563;
-  border: 1px solid #dfe1e6;
+  background: var(--card-bg);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
   border-radius: 5px;
   font-size: 0.9rem;
   font-weight: 500;
@@ -90,7 +90,7 @@
 }
 
 .btn-google:hover {
-  background: #f4f5f7;
+  background: var(--surface);
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
@@ -102,7 +102,7 @@
 }
 
 .app-header {
-  background: #0052cc;
+  background: var(--primary-blue);
   color: #fff;
   padding: 1rem 2rem;
   display: flex;
@@ -130,6 +130,22 @@
   background: rgba(255, 255, 255, 0.25);
 }
 
+.btn-theme {
+  background: rgba(255, 255, 255, 0.15);
+  color: #fff;
+  border: 1px solid rgba(255, 255, 255, 0.3);
+  padding: 0.4rem 0.6rem;
+  border-radius: 5px;
+  cursor: pointer;
+  font-size: 1rem;
+  line-height: 1;
+  transition: background 0.15s;
+}
+
+.btn-theme:hover {
+  background: rgba(255, 255, 255, 0.25);
+}
+
 .app-main {
   max-width: 960px;
   width: 100%;
@@ -145,19 +161,20 @@ input,
 textarea {
   width: 100%;
   padding: 0.5rem 0.75rem;
-  border: 1px solid #dfe1e6;
+  border: 1px solid var(--border);
   border-radius: 5px;
   font-size: 0.9rem;
   font-family: inherit;
-  background: #fafbfc;
-  transition: border-color 0.15s;
+  background: var(--surface);
+  color: var(--text-primary);
+  transition: border-color 0.15s, background 0.2s;
 }
 
 input:focus,
 textarea:focus {
   outline: none;
-  border-color: #0052cc;
-  background: #fff;
+  border-color: var(--primary-blue);
+  background: var(--card-bg);
 }
 
 button {
@@ -168,7 +185,7 @@ button {
   font-family: inherit;
   font-weight: 500;
   cursor: pointer;
-  background: #0052cc;
+  background: var(--primary-blue);
   color: #fff;
   transition: opacity 0.15s;
 }
@@ -183,12 +200,12 @@ button:hover:not(:disabled) {
 }
 
 .btn-secondary {
-  background: #f4f5f7;
-  color: #344563;
+  background: var(--surface);
+  color: var(--text-primary);
 }
 
 .btn-danger {
-  background: #de350b;
+  background: var(--accent-red);
   color: #fff;
 }
 
@@ -207,7 +224,7 @@ button:hover:not(:disabled) {
 
 /* ── Task form ───────────────────────────────────────────────────── */
 .task-form {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 8px;
   padding: 1.5rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -242,7 +259,7 @@ button:hover:not(:disabled) {
 }
 
 .task-item {
-  background: #fff;
+  background: var(--card-bg);
   border-radius: 8px;
   padding: 1rem 1.25rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
@@ -261,7 +278,7 @@ button:hover:not(:disabled) {
 
 .task-content p {
   font-size: 0.85rem;
-  color: #5e6c84;
+  color: var(--text-secondary);
   margin-top: 0.25rem;
 }
 
@@ -278,7 +295,7 @@ button:hover:not(:disabled) {
 }
 
 .empty {
-  color: #5e6c84;
+  color: var(--text-secondary);
   font-size: 0.9rem;
 }
 
@@ -297,17 +314,19 @@ button:hover:not(:disabled) {
 
 select {
   padding: 0.5rem 0.75rem;
-  border: 1px solid #dfe1e6;
+  border: 1px solid var(--border);
   border-radius: 5px;
   font-size: 0.9rem;
   font-family: inherit;
-  background: #fafbfc;
+  background: var(--surface);
+  color: var(--text-primary);
   cursor: pointer;
+  transition: background 0.2s;
 }
 
 select:focus {
   outline: none;
-  border-color: #0052cc;
+  border-color: var(--primary-blue);
 }
 
 /* ── Task meta badges ────────────────────────────────────────────── */
@@ -328,21 +347,21 @@ select:focus {
 }
 
 /* Priority badges */
-.priority-badge.priority-low    { background: #e3fcef; color: #006644; }
-.priority-badge.priority-medium { background: #fffae6; color: #7a5c00; }
-.priority-badge.priority-high   { background: #fff0e6; color: #bf3600; }
-.priority-badge.priority-urgent { background: #ffd5d5; color: #8b0000; }
+.priority-badge.priority-low    { background: var(--badge-low-bg);    color: var(--badge-low-fg);    }
+.priority-badge.priority-medium { background: var(--badge-medium-bg); color: var(--badge-medium-fg); }
+.priority-badge.priority-high   { background: var(--badge-high-bg);   color: var(--badge-high-fg);   }
+.priority-badge.priority-urgent { background: var(--badge-urgent-bg); color: var(--badge-urgent-fg); }
 
 /* Status badges */
-.status-badge.status-todo        { background: #f4f5f7; color: #5e6c84; }
-.status-badge.status-in_progress { background: #deebff; color: #0747a6; }
-.status-badge.status-done        { background: #e3fcef; color: #006644; }
+.status-badge.status-todo        { background: var(--status-todo-bg);     color: var(--status-todo-fg);     }
+.status-badge.status-in_progress { background: var(--status-progress-bg); color: var(--status-progress-fg); }
+.status-badge.status-done        { background: var(--status-done-bg);     color: var(--status-done-fg);     }
 
 /* Due date badge */
-.badge.due-date { background: #f4f5f7; color: #344563; }
+.badge.due-date { background: var(--surface); color: var(--text-primary); }
 
 /* Priority left border on task item */
-.task-item.priority-low    { border-left: 3px solid #36b37e; }
-.task-item.priority-medium { border-left: 3px solid #ffab00; }
-.task-item.priority-high   { border-left: 3px solid #ff5630; }
-.task-item.priority-urgent { border-left: 3px solid #bf2600; }
+.task-item.priority-low    { border-left: 3px solid var(--accent-green);    }
+.task-item.priority-medium { border-left: 3px solid var(--accent-amber);    }
+.task-item.priority-high   { border-left: 3px solid var(--accent-red);      }
+.task-item.priority-urgent { border-left: 3px solid var(--accent-dark-red); }
