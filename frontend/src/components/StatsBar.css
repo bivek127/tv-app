@@ -1,0 +1,35 @@
+.stats-bar {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.stat-card {
+  flex: 1;
+  background: #fff;
+  border-radius: 8px;
+  padding: 1rem 1.25rem;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  border-left: 3px solid transparent;
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+}
+
+.stat-card.stat-total     { border-left-color: #0052cc; }
+.stat-card.stat-completed { border-left-color: #36b37e; }
+.stat-card.stat-progress  { border-left-color: #ffab00; }
+.stat-card.stat-overdue   { border-left-color: #de350b; }
+
+.stat-number {
+  font-size: 1.5rem;
+  font-weight: 700;
+  color: #172b4d;
+}
+
+.stat-label {
+  font-size: 0.75rem;
+  color: #5e6c84;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}

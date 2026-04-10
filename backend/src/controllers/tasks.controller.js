@@ -5,7 +5,8 @@ const { logActivity } = require('../services/activity.service');
 
 async function getTasks(req, res, next) {
     try {
-        const tasks = await tasksService.getAllTasks(req.user.id);
+        const search = req.query.search || null;
+        const tasks = await tasksService.getAllTasks(req.user.id, search);
         res.json({ success: true, data: tasks });
     } catch (err) {
         next(err);

@@ -18,7 +18,6 @@ CREATE TABLE IF NOT EXISTS tasks (
     user_id     UUID        REFERENCES users(id) ON DELETE CASCADE,
     title       TEXT        NOT NULL,
     description TEXT,
-    completed   BOOLEAN     NOT NULL DEFAULT false,
     priority    TEXT        NOT NULL DEFAULT 'medium',
     status      TEXT        NOT NULL DEFAULT 'todo',
     due_date    DATE,
