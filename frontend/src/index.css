@@ -4,6 +4,7 @@
   --bg:              #f4f5f7;
   --surface:         #ebecf0;
   --card-bg:         #ffffff;
+  --card-shadow:     0 4px 16px rgba(0, 0, 0, 0.08);
 
   /* Typography */
   --text-primary:    #172b4d;
@@ -16,6 +17,7 @@
   /* Brand */
   --primary-blue:    #0052cc;
   --primary-blue-dk: #0747a6;
+  --primary-glow:    transparent;
 
   /* Priority badge fills */
   --badge-urgent-bg: #ffd5d5; --badge-urgent-fg: #8b0000;
@@ -34,53 +36,65 @@
   --col-done-bg:     #e3fcef; --col-done-fg:     #006644;
 
   /* Accent borders (stat cards + task priority) */
-  --accent-blue:  #0052cc;
-  --accent-green: #36b37e;
-  --accent-amber: #ffab00;
-  --accent-red:   #de350b;
+  --accent-blue:     #0052cc;
+  --accent-green:    #36b37e;
+  --accent-amber:    #ffab00;
+  --accent-red:      #de350b;
   --accent-dark-red: #bf2600;
+
+  /* Error */
+  --error-fg: #c0392b;
+  --error-bg: #fce4e4;
+  --error-border: #f5c6c6;
 }
 
 [data-theme="dark"] {
-  /* Surfaces */
-  --bg:              #0d1117;
-  --surface:         #161b22;
-  --card-bg:         #1c2128;
+  /* ─── Premium dark surfaces with subtle blue undertone ───────── */
+  --bg:              #101218;
+  --surface:         #181c25;
+  --card-bg:         #1e2330;
+  --card-shadow:     0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(99, 140, 255, 0.06);
 
-  /* Typography */
-  --text-primary:    #e6edf3;
-  --text-secondary:  #8b949e;
-  --text-muted:      #6e7681;
+  /* Text — bright for readability but not blinding */
+  --text-primary:    #eaedf3;
+  --text-secondary:  #9ba4b4;
+  --text-muted:      #636d7e;
 
-  /* Borders & dividers */
-  --border:          #30363d;
+  /* Border — subtle, slightly blue-tinted */
+  --border:          #2a3040;
 
-  /* Brand (slightly lighter for dark bg readability) */
-  --primary-blue:    #4d94ff;
-  --primary-blue-dk: #79b1ff;
+  /* Brand — vivid blue that pops on dark */
+  --primary-blue:    #5b8def;
+  --primary-blue-dk: #7fa8f7;
+  --primary-glow:    rgba(91, 141, 239, 0.15);
 
-  /* Priority badge fills — muted for dark */
-  --badge-urgent-bg: #3d1f1f; --badge-urgent-fg: #ff8080;
-  --badge-high-bg:   #2e1f10; --badge-high-fg:   #ffaa66;
-  --badge-medium-bg: #2c260d; --badge-medium-fg: #e6c84d;
-  --badge-low-bg:    #0d2b1f; --badge-low-fg:    #4caf82;
+  /* Priority badges — rich jewel tones, not muddy ────────────── */
+  --badge-urgent-bg: rgba(255,  85,  85, 0.15); --badge-urgent-fg: #ff6b6b;
+  --badge-high-bg:   rgba(255, 160,  64, 0.15); --badge-high-fg:   #ffa040;
+  --badge-medium-bg: rgba(255, 204,  64, 0.15); --badge-medium-fg: #ffd048;
+  --badge-low-bg:    rgba( 64, 200, 140, 0.15); --badge-low-fg:    #40c88c;
 
-  /* Status badge fills */
-  --status-todo-bg:     #21262d; --status-todo-fg:     #8b949e;
-  --status-progress-bg: #0d2045; --status-progress-fg: #79b1ff;
-  --status-done-bg:     #0d2b1f; --status-done-fg:     #4caf82;
+  /* Status badges — gentle translucent fills */
+  --status-todo-bg:     rgba(155, 164, 180, 0.12); --status-todo-fg:     #9ba4b4;
+  --status-progress-bg: rgba( 91, 141, 239, 0.14); --status-progress-fg: #7fa8f7;
+  --status-done-bg:     rgba( 64, 200, 140, 0.14); --status-done-fg:     #40c88c;
 
   /* Kanban column headers */
-  --col-todo-bg:     #21262d; --col-todo-fg:     #8b949e;
-  --col-progress-bg: #0d2045; --col-progress-fg: #79b1ff;
-  --col-done-bg:     #0d2b1f; --col-done-fg:     #4caf82;
+  --col-todo-bg:     rgba(155, 164, 180, 0.10); --col-todo-fg:     #9ba4b4;
+  --col-progress-bg: rgba( 91, 141, 239, 0.12); --col-progress-fg: #7fa8f7;
+  --col-done-bg:     rgba( 64, 200, 140, 0.12); --col-done-fg:     #40c88c;
 
-  /* Accent borders */
-  --accent-blue:     #4d94ff;
-  --accent-green:    #4caf82;
-  --accent-amber:    #e6c84d;
-  --accent-red:      #f47e6a;
-  --accent-dark-red: #f47e6a;
+  /* Accent borders — brighter to read against dark cards */
+  --accent-blue:     #5b8def;
+  --accent-green:    #40c88c;
+  --accent-amber:    #ffd048;
+  --accent-red:      #ff6b6b;
+  --accent-dark-red: #ff5252;
+
+  /* Error */
+  --error-fg: #ff6b6b;
+  --error-bg: rgba(255, 85, 85, 0.1);
+  --error-border: rgba(255, 85, 85, 0.2);
 }
 
 /* ── Reset ───────────────────────────────────────────────────────── */
@@ -97,5 +111,5 @@ body {
   background: var(--bg);
   color: var(--text-primary);
   line-height: 1.5;
-  transition: background 0.2s, color 0.2s;
+  transition: background 0.3s ease, color 0.3s ease;
 }

@@ -5,18 +5,23 @@
   align-items: center;
   justify-content: center;
   background: var(--bg);
+  position: relative;
+  transition: background 0.3s ease;
 }
 
 .auth-card {
   background: var(--card-bg);
-  border-radius: 10px;
+  border: 1px solid var(--border);
+  border-radius: 14px;
   padding: 2.5rem 2rem;
   width: 100%;
   max-width: 400px;
-  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.1);
+  box-shadow: var(--card-shadow);
   display: flex;
   flex-direction: column;
   gap: 1rem;
+  position: relative;
+  transition: background 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
 }
 
 .auth-logo {
@@ -86,7 +91,7 @@
   font-size: 0.9rem;
   font-weight: 500;
   cursor: pointer;
-  transition: background 0.15s, box-shadow 0.15s;
+  transition: background 0.15s, box-shadow 0.15s, border-color 0.15s;
 }
 
 .btn-google:hover {
@@ -94,11 +99,41 @@
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
+/* ── Floating theme toggle (shown on auth pages) ─────────────────── */
+.auth-theme-toggle {
+  position: fixed;
+  top: 1.25rem;
+  right: 1.25rem;
+  width: 40px;
+  height: 40px;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  color: var(--text-secondary);
+  font-size: 1.15rem;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.12);
+  transition: background 0.2s, border-color 0.2s, transform 0.2s;
+  z-index: 100;
+  padding: 0;
+  line-height: 1;
+}
+
+.auth-theme-toggle:hover {
+  transform: scale(1.1);
+  background: var(--surface);
+}
+
 /* ── Dashboard ───────────────────────────────────────────────────── */
 .app {
   min-height: 100vh;
   display: flex;
   flex-direction: column;
+  background: var(--bg);
+  transition: background 0.3s ease;
 }
 
 .app-header {
@@ -108,11 +143,22 @@
   display: flex;
   align-items: center;
   justify-content: space-between;
+  box-shadow: 0 2px 12px rgba(0, 0, 0, 0.15);
+}
+
+[data-theme="dark"] .app-header {
+  background: #181c25;
+  border-bottom: 1px solid var(--border);
+  box-shadow: 0 2px 16px rgba(0, 0, 0, 0.3);
 }
 
 .app-header h1 {
   font-size: 1.5rem;
   letter-spacing: 0.05em;
+}
+
+[data-theme="dark"] .app-header h1 {
+  color: var(--primary-blue);
 }
 
 .btn-logout {
@@ -130,6 +176,18 @@
   background: rgba(255, 255, 255, 0.25);
 }
 
+[data-theme="dark"] .btn-logout {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border);
+  color: var(--text-secondary);
+}
+
+[data-theme="dark"] .btn-logout:hover {
+  background: rgba(255, 255, 255, 0.1);
+  color: var(--text-primary);
+}
+
+/* Header theme toggle */
 .btn-theme {
   background: rgba(255, 255, 255, 0.15);
   color: #fff;
@@ -144,6 +202,24 @@
 
 .btn-theme:hover {
   background: rgba(255, 255, 255, 0.25);
+}
+
+[data-theme="dark"] .btn-theme {
+  background: rgba(255, 255, 255, 0.06);
+  border-color: var(--border);
+}
+
+[data-theme="dark"] .btn-theme:hover {
+  background: rgba(255, 255, 255, 0.1);
+}
+
+/* Header nav links */
+[data-theme="dark"] .app-header a {
+  color: var(--text-secondary) !important;
+}
+
+[data-theme="dark"] .app-header a:hover {
+  color: var(--text-primary) !important;
 }
 
 .app-main {
@@ -167,7 +243,7 @@ textarea {
   font-family: inherit;
   background: var(--surface);
   color: var(--text-primary);
-  transition: border-color 0.15s, background 0.2s;
+  transition: border-color 0.15s, background 0.2s, box-shadow 0.2s;
 }
 
 input:focus,
@@ -175,6 +251,12 @@ textarea:focus {
   outline: none;
   border-color: var(--primary-blue);
   background: var(--card-bg);
+  box-shadow: 0 0 0 3px var(--primary-glow);
+}
+
+input::placeholder,
+textarea::placeholder {
+  color: var(--text-muted);
 }
 
 button {
@@ -187,7 +269,7 @@ button {
   cursor: pointer;
   background: var(--primary-blue);
   color: #fff;
-  transition: opacity 0.15s;
+  transition: opacity 0.15s, box-shadow 0.15s;
 }
 
 button:disabled {
@@ -199,9 +281,14 @@ button:hover:not(:disabled) {
   opacity: 0.88;
 }
 
+[data-theme="dark"] button:hover:not(:disabled):not(.btn-secondary):not(.btn-google):not(.btn-theme):not(.btn-logout):not(.auth-theme-toggle):not(.btn-danger) {
+  box-shadow: 0 0 12px var(--primary-glow);
+}
+
 .btn-secondary {
   background: var(--surface);
   color: var(--text-primary);
+  border: 1px solid var(--border);
 }
 
 .btn-danger {
@@ -211,13 +298,13 @@ button:hover:not(:disabled) {
 
 /* ── Error ───────────────────────────────────────────────────────── */
 .error {
-  color: #c0392b;
+  color: var(--error-fg);
   font-size: 0.875rem;
 }
 
 .error.banner {
-  background: #fce4e4;
-  border: 1px solid #f5c6c6;
+  background: var(--error-bg);
+  border: 1px solid var(--error-border);
   padding: 0.6rem 1rem;
   border-radius: 6px;
 }
@@ -225,12 +312,14 @@ button:hover:not(:disabled) {
 /* ── Task form ───────────────────────────────────────────────────── */
 .task-form {
   background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 1.5rem;
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  box-shadow: var(--card-shadow);
   display: flex;
   flex-direction: column;
   gap: 0.75rem;
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .task-form h2 {
@@ -260,9 +349,11 @@ button:hover:not(:disabled) {
 
 .task-item {
   background: var(--card-bg);
+  border: 1px solid var(--border);
   border-radius: 8px;
   padding: 1rem 1.25rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.07);
+  transition: background 0.3s ease, border-color 0.3s ease;
 }
 
 .task-view {
@@ -321,12 +412,13 @@ select {
   background: var(--surface);
   color: var(--text-primary);
   cursor: pointer;
-  transition: background 0.2s;
+  transition: background 0.2s, border-color 0.2s;
 }
 
 select:focus {
   outline: none;
   border-color: var(--primary-blue);
+  box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
 /* ── Task meta badges ────────────────────────────────────────────── */

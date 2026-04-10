@@ -1,11 +1,13 @@
 import { useState } from 'react';
 import { useSearchParams, Link, useNavigate } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 import apiClient from '../lib/apiClient';
 
 function ResetPassword() {
     const [searchParams]              = useSearchParams();
     const navigate                    = useNavigate();
     const token                       = searchParams.get('token') || '';
+    const { theme, toggleTheme }      = useTheme();
 
     const [newPassword, setNewPassword]       = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
@@ -45,6 +47,9 @@ function ResetPassword() {
     if (success) {
         return (
             <div className="auth-page">
+                <button onClick={toggleTheme} className="auth-theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+                    {theme === 'dark' ? '☀️' : '🌙'}
+                </button>
                 <div className="auth-card">
                     <h1 className="auth-logo">TaskVault</h1>
                     <h2>Password updated</h2>
@@ -63,6 +68,9 @@ function ResetPassword() {
 
     return (
         <div className="auth-page">
+            <button onClick={toggleTheme} className="auth-theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+                {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
             <div className="auth-card">
                 <h1 className="auth-logo">TaskVault</h1>
                 <h2>Choose new password</h2>
