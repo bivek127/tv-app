@@ -4,10 +4,17 @@ import apiClient, { setToken, removeToken, TOKEN_KEY } from '../lib/apiClient';
 const AuthContext = createContext(null);
 
 export function AuthProvider({ children }) {
-    // Initialise from localStorage so page refresh keeps user logged in
-    const [accessToken, setAccessToken] = useState(
-        () => localStorage.getItem(TOKEN_KEY)
-    );
+    // Check URL for OAuth token before first render
+    const [accessToken, setAccessToken] = useState(() => {
+        const params = new URLSearchParams(window.location.search);
+        const oauthToken = params.get('token');
+        if (oauthToken) {
+            setToken(oauthToken);
+            window.history.replaceState({}, '', window.location.pathname);
+            return oauthToken;
+        }
+        return localStorage.getItem(TOKEN_KEY);
+    });
 
     const isAuthenticated = Boolean(accessToken);
 
