@@ -3,7 +3,16 @@ const pool = require('../db');
 /**
  * Fetch all tasks belonging to a specific user.
  */
-async function getAllTasks(userId) {
+async function getAllTasks(userId, search) {
+    if (search) {
+        const result = await pool.query(
+            `SELECT * FROM tasks
+             WHERE user_id = $1 AND (title ILIKE $2 OR description ILIKE $2)
+             ORDER BY created_at DESC`,
+            [userId, `%${search}%`]
+        );
+        return result.rows;
+    }
     const result = await pool.query(
         'SELECT * FROM tasks WHERE user_id = $1 ORDER BY created_at DESC',
         [userId]
