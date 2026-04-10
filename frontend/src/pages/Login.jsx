@@ -56,6 +56,9 @@ function Login() {
                         {loading ? 'Signing in…' : 'Sign in'}
                     </button>
                 </form>
+                <p className="auth-switch" style={{ marginTop: '0.5rem' }}>
+                    <Link to="/forgot-password">Forgot password?</Link>
+                </p>
                 <div className="auth-divider"><span>or</span></div>
                 <button type="button" className="btn-google" onClick={handleGoogleLogin}>
                     <svg viewBox="0 0 24 24" width="18" height="18">
