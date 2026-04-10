@@ -1,5 +1,6 @@
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { useTheme } from '../context/ThemeContext';
 import apiClient from '../lib/apiClient';
 
 function ForgotPassword() {
@@ -7,6 +8,7 @@ function ForgotPassword() {
     const [loading, setLoading]   = useState(false);
     const [error, setError]       = useState('');
     const [submitted, setSubmitted] = useState(false);
+    const { theme, toggleTheme } = useTheme();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
@@ -27,6 +29,9 @@ function ForgotPassword() {
 
     return (
         <div className="auth-page">
+            <button onClick={toggleTheme} className="auth-theme-toggle" title="Toggle theme" aria-label="Toggle theme">
+                {theme === 'dark' ? '☀️' : '🌙'}
+            </button>
             <div className="auth-card">
                 <h1 className="auth-logo">TaskVault</h1>
                 <h2>Reset password</h2>

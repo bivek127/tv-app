@@ -1,6 +1,7 @@
 import { useState, useEffect } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
+import { useTheme } from './context/ThemeContext';
 import { getTasks } from './api/tasks';
 import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
@@ -24,6 +25,7 @@ function Dashboard() {
   const [filterPriority, setFilterPriority] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const { logout } = useAuth();
+  const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
 
   const refreshTasks = async () => {
@@ -60,6 +62,9 @@ function Dashboard() {
       <header className="app-header">
         <h1>TaskVault</h1>
         <nav style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          <button onClick={toggleTheme} className="btn-theme" title="Toggle theme" aria-label="Toggle theme">
+            {theme === 'dark' ? '☀️' : '🌙'}
+          </button>
           <button onClick={handleLogout} className="btn-logout">Sign out</button>
         </nav>
       </header>
