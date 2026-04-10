@@ -3,10 +3,17 @@ const router = express.Router();
 const rateLimit = require('express-rate-limit');
 const passport = require('passport');
 const authController = require('../controllers/auth.controller');
+const passwordResetController = require('../controllers/passwordReset.controller');
 const { issueTokens } = require('../services/auth.service');
 const { logActivity } = require('../services/activity.service');
 const logger = require('../utils/logger');
-const { validateBody, loginSchema, registerSchema } = require('../validation/schemas');
+const {
+    validateBody,
+    loginSchema,
+    registerSchema,
+    forgotPasswordSchema,
+    resetPasswordSchema,
+} = require('../validation/schemas');
 
 // Rate limiter: 5 login attempts per minute per IP
 const loginLimiter = rateLimit({
@@ -21,6 +28,8 @@ router.post('/register', validateBody(registerSchema), authController.register);
 router.post('/login', loginLimiter, validateBody(loginSchema), authController.login);
 router.post('/refresh', authController.refresh);
 router.post('/logout', authController.logout);
+router.post('/forgot-password', validateBody(forgotPasswordSchema), passwordResetController.forgotPassword);
+router.post('/reset-password', validateBody(resetPasswordSchema), passwordResetController.resetPassword);
 
 // ── Google OAuth ─────────────────────────────────────────────────
 const isProduction = process.env.NODE_ENV === 'production';
