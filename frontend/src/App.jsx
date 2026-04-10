@@ -1,5 +1,5 @@
 import { useState, useEffect } from 'react';
-import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
+import { Routes, Route, Navigate, Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { getTasks } from './api/tasks';
 import TaskList from './components/TaskList';
@@ -12,6 +12,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import ActivityPage from './pages/ActivityPage';
 import './App.css';
 
 // ── Task dashboard (only rendered when authenticated) ──────────────
@@ -58,7 +59,10 @@ function Dashboard() {
     <div className="app">
       <header className="app-header">
         <h1>TaskVault</h1>
-        <button onClick={handleLogout} className="btn-logout">Sign out</button>
+        <nav style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          <Link to="/activity" style={{ color: '#fff', fontSize: '0.875rem', textDecoration: 'none', opacity: 0.85 }}>Activity</Link>
+          <button onClick={handleLogout} className="btn-logout">Sign out</button>
+        </nav>
       </header>
       <main className="app-main">
         {error && <p className="error banner">{error}</p>}
@@ -101,6 +105,14 @@ function App() {
         <Route path="/register" element={<Register />} />
         <Route path="/forgot-password" element={<ForgotPassword />} />
         <Route path="/reset-password" element={<ResetPassword />} />
+        <Route
+          path="/activity"
+          element={
+            <ProtectedRoute>
+              <ActivityPage />
+            </ProtectedRoute>
+          }
+        />
         <Route
           path="/"
           element={
