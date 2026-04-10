@@ -91,30 +91,10 @@ function Dashboard() {
   );
 }
 
-// ── Handle OAuth token from redirect ──────────────────────────────
-function OAuthHandler() {
-  const { loginWithToken } = useAuth();
-  const navigate = useNavigate();
-
-  useEffect(() => {
-    const params = new URLSearchParams(window.location.search);
-    const token = params.get('token');
-    if (token) {
-      loginWithToken(token);
-      window.history.replaceState({}, '', '/');
-      navigate('/', { replace: true });
-    }
-  }, []);
-
-  return null;
-}
-
 // ── Root app with routing ──────────────────────────────────────────
 function App() {
   return (
-    <>
-      <OAuthHandler />
-      <Routes>
+    <Routes>
         <Route path="/login" element={<Login />} />
         <Route path="/register" element={<Register />} />
         <Route
@@ -127,7 +107,6 @@ function App() {
         />
         <Route path="*" element={<Navigate to="/" replace />} />
       </Routes>
-    </>
   );
 }
 
