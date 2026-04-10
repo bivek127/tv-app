@@ -1,6 +1,42 @@
+import { useState } from 'react';
+import { getToken } from '../lib/apiClient';
 import './FilterBar.css';
 
+const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
+
 function FilterBar({ search, onSearchChange, priority, onPriorityChange, status, onStatusChange, onClear, taskCount }) {
+    const [exporting, setExporting] = useState(false);
+
+    const handleExport = async () => {
+        setExporting(true);
+        try {
+            const url = search
+                ? `${BASE_URL}/tasks/export?search=${encodeURIComponent(search)}`
+                : `${BASE_URL}/tasks/export`;
+
+            const res = await fetch(url, {
+                headers: { Authorization: `Bearer ${getToken()}` },
+                credentials: 'include',
+            });
+
+            if (!res.ok) throw new Error('Export failed');
+
+            const blob = await res.blob();
+            const objectUrl = URL.createObjectURL(blob);
+            const a = document.createElement('a');
+            a.href = objectUrl;
+            a.download = 'tasks.csv';
+            document.body.appendChild(a);
+            a.click();
+            a.remove();
+            URL.revokeObjectURL(objectUrl);
+        } catch (err) {
+            alert(err.message || 'Could not export tasks');
+        } finally {
+            setExporting(false);
+        }
+    };
+
     return (
         <div className="filter-bar">
             <input
@@ -27,6 +63,9 @@ function FilterBar({ search, onSearchChange, priority, onPriorityChange, status,
                 <button onClick={onClear} className="filter-clear">Clear</button>
             )}
             <span className="filter-count">{taskCount} tasks found</span>
+            <button onClick={handleExport} disabled={exporting} className="btn-export">
+                {exporting ? 'Exporting…' : 'Export CSV'}
+            </button>
         </div>
     );
 }
