@@ -7,6 +7,7 @@ import TaskForm from './components/TaskForm';
 import KanbanBoard from './components/KanbanBoard';
 import StatsBar from './components/StatsBar';
 import FilterBar from './components/FilterBar';
+import AnalyticsPanel from './components/AnalyticsPanel';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -58,12 +59,15 @@ function Dashboard() {
     <div className="app">
       <header className="app-header">
         <h1>TaskVault</h1>
-        <button onClick={handleLogout} className="btn-logout">Sign out</button>
+        <nav style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+          <button onClick={handleLogout} className="btn-logout">Sign out</button>
+        </nav>
       </header>
       <main className="app-main">
         {error && <p className="error banner">{error}</p>}
         <StatsBar tasks={tasks} />
         <TaskForm onCreated={refreshTasks} />
+        <AnalyticsPanel />
         <FilterBar
           search={search}
           onSearchChange={setSearch}

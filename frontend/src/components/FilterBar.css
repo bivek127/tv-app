@@ -3,7 +3,8 @@
   align-items: center;
   gap: 0.5rem;
   flex-wrap: wrap;
-  background: #fff;
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border, #dfe1e6);
   border-radius: 8px;
   padding: 0.75rem 1rem;
   box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
@@ -16,37 +17,53 @@
 
 .filter-select {
   padding: 0.5rem 0.75rem;
-  border: 1px solid #dfe1e6;
+  border: 1px solid var(--border, #dfe1e6);
   border-radius: 5px;
   font-size: 0.85rem;
   font-family: inherit;
-  background: #fafbfc;
+  background: var(--surface, #fafbfc);
+  color: var(--text-primary, #172b4d);
   cursor: pointer;
   min-width: 130px;
 }
 
 .filter-select:focus {
   outline: none;
-  border-color: #0052cc;
+  border-color: var(--primary-blue, #0052cc);
 }
 
 .filter-clear {
   padding: 0.5rem 0.75rem;
-  background: #f4f5f7;
-  color: #344563;
-  border: 1px solid #dfe1e6;
+  background: var(--surface, #f4f5f7);
+  color: var(--text-primary, #344563);
+  border: 1px solid var(--border, #dfe1e6);
   border-radius: 5px;
   font-size: 0.8rem;
   cursor: pointer;
 }
 
 .filter-clear:hover {
-  background: #ebecf0;
+  background: var(--bg, #ebecf0);
 }
 
 .filter-count {
   font-size: 0.8rem;
-  color: #5e6c84;
-  margin-left: auto;
+  color: var(--text-secondary, #5e6c84);
   white-space: nowrap;
+}
+
+.btn-export {
+  padding: 0.4rem 0.75rem;
+  font-size: 0.8rem;
+  background: var(--surface, #f4f5f7);
+  color: var(--text-primary, #344563);
+  border: 1px solid var(--border, #dfe1e6);
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s;
+}
+
+.btn-export:hover:not(:disabled) {
+  background: var(--bg, #ebecf0);
 }

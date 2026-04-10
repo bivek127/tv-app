@@ -1,0 +1,146 @@
+/* ── Analytics panel ──────────────────────────────────────────────── */
+.analytics-panel {
+  background: var(--card-bg, #fff);
+  border: 1px solid var(--border, #dfe1e6);
+  border-radius: 8px;
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  overflow: hidden;
+}
+
+.analytics-toggle {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.75rem 1.25rem;
+  background: transparent;
+  color: var(--text-primary, #172b4d);
+  border: none;
+  cursor: pointer;
+  font-size: 0.9rem;
+  font-weight: 600;
+}
+
+.analytics-toggle:hover {
+  background: var(--surface, #f4f5f7);
+  opacity: 1;
+}
+
+.analytics-toggle .chevron {
+  transition: transform 0.2s ease;
+  font-size: 0.75rem;
+}
+
+.analytics-toggle .chevron.open {
+  transform: rotate(180deg);
+}
+
+/* ── Body ─────────────────────────────────────────────────────────── */
+.analytics-body {
+  padding: 0 1.25rem 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.25rem;
+}
+
+/* ── Section ──────────────────────────────────────────────────────── */
+.analytics-section h3 {
+  font-size: 0.75rem;
+  font-weight: 600;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--text-secondary, #5e6c84);
+  margin-bottom: 0.5rem;
+}
+
+/* ── Bar rows ─────────────────────────────────────────────────────── */
+.analytics-bars {
+  display: flex;
+  flex-direction: column;
+  gap: 0.4rem;
+}
+
+.bar-row {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+}
+
+.bar-label {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #5e6c84);
+  width: 80px;
+  text-align: right;
+  flex-shrink: 0;
+}
+
+.bar-track {
+  flex: 1;
+  height: 20px;
+  background: var(--surface, #f4f5f7);
+  border-radius: 4px;
+  overflow: hidden;
+}
+
+.bar-fill {
+  height: 100%;
+  border-radius: 4px;
+  transition: width 0.4s ease;
+  min-width: 2px;
+}
+
+.bar-value {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: var(--text-primary, #172b4d);
+  width: 28px;
+  flex-shrink: 0;
+}
+
+/* Status bar colors */
+.bar-fill.status-todo        { background: var(--col-todo-fg, #42526e);     }
+.bar-fill.status-in_progress { background: var(--col-progress-fg, #0747a6); }
+.bar-fill.status-done        { background: var(--col-done-fg, #006644);     }
+
+/* Priority bar colors */
+.bar-fill.priority-low    { background: var(--accent-green, #36b37e);    }
+.bar-fill.priority-medium { background: var(--accent-amber, #ffab00);    }
+.bar-fill.priority-high   { background: var(--accent-red, #de350b);      }
+.bar-fill.priority-urgent { background: var(--accent-dark-red, #bf2600); }
+
+/* ── KPI boxes ────────────────────────────────────────────────────── */
+.analytics-kpis {
+  display: flex;
+  gap: 0.75rem;
+}
+
+.kpi-box {
+  flex: 1;
+  text-align: center;
+  padding: 0.75rem 0.5rem;
+  background: var(--surface, #f4f5f7);
+  border-radius: 6px;
+}
+
+.kpi-value {
+  font-size: 1.25rem;
+  font-weight: 700;
+  color: var(--text-primary, #172b4d);
+}
+
+.kpi-label {
+  font-size: 0.7rem;
+  color: var(--text-secondary, #5e6c84);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+  margin-top: 0.15rem;
+}
+
+/* ── Loading ──────────────────────────────────────────────────────── */
+.analytics-loading {
+  text-align: center;
+  color: var(--text-muted, #97a0af);
+  padding: 1rem 0;
+  font-size: 0.85rem;
+}
