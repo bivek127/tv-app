@@ -5,6 +5,7 @@ const pool = require('./db');
 const authRouter = require('./routes/auth.routes');
 const tasksRouter = require('./routes/tasks.routes');
 const activityRouter = require('./routes/activity.routes');
+const profileRouter = require('./routes/profile.routes');
 const { authenticate } = require('./middleware/auth.middleware');
 const errorMiddleware = require('./middleware/error.middleware');
 
@@ -41,6 +42,7 @@ app.use('/auth', authRouter);
 // ── Protected routes ──────────────────────────────────────────────
 app.use('/tasks', authenticate, tasksRouter);
 app.use('/activity', authenticate, activityRouter);
+app.use('/profile', authenticate, profileRouter);
 
 // ── Global error handler (must be last) ──────────────────────────
 app.use(errorMiddleware);

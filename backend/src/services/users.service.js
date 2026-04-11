@@ -16,7 +16,7 @@ async function findUserByEmail(email) {
  */
 async function findUserById(id) {
     const result = await pool.query(
-        'SELECT id, email, provider, created_at FROM users WHERE id = $1',
+        'SELECT id, email, name, provider, created_at FROM users WHERE id = $1',
         [id]
     );
     return result.rows[0] || null;
@@ -54,4 +54,20 @@ async function findOrCreateOAuthUser(email, provider, providerId) {
     return result.rows[0];
 }
 
-module.exports = { findUserByEmail, findUserById, createUser, findOrCreateOAuthUser };
+async function updateProfile(userId, { name }) {
+    const result = await pool.query(
+        `UPDATE users SET name = $1 WHERE id = $2
+         RETURNING id, email, name, provider, created_at`,
+        [name, userId]
+    );
+    return result.rows[0] || null;
+}
+
+async function updatePassword(userId, newPasswordHash) {
+    await pool.query(
+        'UPDATE users SET password_hash = $1 WHERE id = $2',
+        [newPasswordHash, userId]
+    );
+}
+
+module.exports = { findUserByEmail, findUserById, createUser, findOrCreateOAuthUser, updateProfile, updatePassword };
