@@ -1,7 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useSortable } from '@dnd-kit/sortable';
 import { CSS } from '@dnd-kit/utilities';
 import { updateTask, deleteTask } from '../api/tasks';
+import { getSubtasks } from '../api/subtasks';
+import Checklist from './Checklist';
 
 const PRIORITY_COLORS = {
     urgent: '#bf2600',
@@ -31,6 +33,7 @@ function TaskCard({ task, onRefresh }) {
     const [dueDate, setDueDate] = useState(task.due_date ? task.due_date.slice(0, 10) : '');
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
+    const [subtaskStats, setSubtaskStats] = useState({ total: 0, completed: 0 });
 
     const {
         attributes,
@@ -46,6 +49,15 @@ function TaskCard({ task, onRefresh }) {
         transition,
         opacity: isDragging ? 0.5 : 1,
     };
+
+    useEffect(() => {
+        getSubtasks(task.id).then((data) => {
+            setSubtaskStats({
+                total: data.length,
+                completed: data.filter((s) => s.completed).length,
+            });
+        }).catch(() => {});
+    }, [task.id, editing]);
 
     const handleSave = async () => {
         if (!title.trim()) { setError('Title is required'); return; }
@@ -110,6 +122,7 @@ function TaskCard({ task, onRefresh }) {
                     </select>
                 </div>
                 <input type="date" value={dueDate} onChange={(e) => setDueDate(e.target.value)} />
+                <Checklist taskId={task.id} />
                 <div className="kanban-edit-actions">
                     <button onClick={handleSave} disabled={loading}>{loading ? 'Saving…' : 'Save'}</button>
                     <button onClick={handleCancel} className="btn-secondary">Cancel</button>
@@ -118,6 +131,8 @@ function TaskCard({ task, onRefresh }) {
             </div>
         );
     }
+
+    const percent = subtaskStats.total === 0 ? 0 : Math.round((subtaskStats.completed / subtaskStats.total) * 100);
 
     return (
         <div
@@ -131,6 +146,14 @@ function TaskCard({ task, onRefresh }) {
             <div className="kanban-card-title">{task.title}</div>
             {task.description && (
                 <div className="kanban-card-desc">{task.description}</div>
+            )}
+            {subtaskStats.total > 0 && (
+                <div className="kanban-subtask-progress">
+                    <div className="kanban-subtask-bar">
+                        <div className="kanban-subtask-fill" style={{ width: `${percent}%` }} />
+                    </div>
+                    <span className="kanban-subtask-count">{subtaskStats.completed}/{subtaskStats.total}</span>
+                </div>
             )}
             <div className="kanban-card-meta">
                 <span

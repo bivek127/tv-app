@@ -1,0 +1,98 @@
+.checklist {
+  display: flex;
+  flex-direction: column;
+  gap: 0.5rem;
+}
+
+.checklist-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.checklist-label {
+  font-size: 0.8rem;
+  font-weight: 600;
+  color: #344563;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.checklist-count {
+  font-size: 0.75rem;
+  color: #5e6c84;
+}
+
+/* Progress bar */
+.checklist-progress-bar {
+  height: 6px;
+  background: #dfe1e6;
+  border-radius: 3px;
+  overflow: hidden;
+}
+
+.checklist-progress-fill {
+  height: 100%;
+  background: #36b37e;
+  border-radius: 3px;
+  transition: width 0.3s ease;
+}
+
+/* Items */
+.checklist-items {
+  list-style: none;
+  display: flex;
+  flex-direction: column;
+  gap: 0.3rem;
+}
+
+.checklist-item {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  font-size: 0.85rem;
+  color: #172b4d;
+}
+
+.checklist-item input[type="checkbox"] {
+  width: auto;
+  cursor: pointer;
+  accent-color: #36b37e;
+}
+
+.checklist-item-done {
+  text-decoration: line-through;
+  color: #97a0af;
+}
+
+.checklist-delete {
+  margin-left: auto;
+  background: none;
+  border: none;
+  color: #97a0af;
+  font-size: 1rem;
+  cursor: pointer;
+  padding: 0 0.2rem;
+  line-height: 1;
+}
+
+.checklist-delete:hover {
+  color: #de350b;
+}
+
+/* Add form */
+.checklist-add {
+  display: flex;
+  gap: 0.4rem;
+}
+
+.checklist-add input {
+  flex: 1;
+  font-size: 0.8rem;
+  padding: 0.35rem 0.5rem;
+}
+
+.checklist-add button {
+  font-size: 0.8rem;
+  padding: 0.35rem 0.7rem;
+}
