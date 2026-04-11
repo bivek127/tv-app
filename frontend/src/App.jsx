@@ -15,6 +15,7 @@ import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
 import ResetPassword from './pages/ResetPassword';
+import Profile from './pages/Profile';
 import './App.css';
 
 // ── Task dashboard (only rendered when authenticated) ──────────────
@@ -81,6 +82,7 @@ function Dashboard() {
           <button onClick={toggleTheme} className="btn-theme" title="Toggle theme" aria-label="Toggle theme">
             {theme === 'dark' ? '☀️' : '🌙'}
           </button>
+          <button onClick={() => navigate('/profile')} className="btn-secondary" style={{ fontSize: '0.85rem' }}>Profile</button>
           <button onClick={handleLogout} className="btn-logout">Sign out</button>
         </nav>
       </header>
@@ -134,6 +136,14 @@ function App() {
           element={
             <ProtectedRoute>
               <Dashboard />
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/profile"
+          element={
+            <ProtectedRoute>
+              <Profile />
             </ProtectedRoute>
           }
         />
