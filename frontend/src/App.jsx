@@ -7,6 +7,7 @@ import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
 import KanbanBoard from './components/KanbanBoard';
 import StatsBar from './components/StatsBar';
+import DueDateBanner from './components/DueDateBanner';
 import FilterBar from './components/FilterBar';
 import AnalyticsPanel from './components/AnalyticsPanel';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -86,6 +87,7 @@ function Dashboard() {
       <main className="app-main">
         {error && <p className="error banner">{error}</p>}
         <StatsBar tasks={tasks} />
+        <DueDateBanner tasks={tasks} onRefresh={refreshTasks} />
         <TaskForm onCreated={refreshTasks} />
         <AnalyticsPanel />
         <FilterBar
