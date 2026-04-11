@@ -1,0 +1,120 @@
+.due-banner {
+  border-radius: 8px;
+  border: 1px solid var(--border);
+  background: var(--card-bg);
+  overflow: hidden;
+  transition: background 0.3s ease;
+}
+
+.due-banner-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 0.6rem 1rem;
+  cursor: pointer;
+  user-select: none;
+}
+
+.due-banner-title {
+  display: flex;
+  gap: 0.5rem;
+  align-items: center;
+}
+
+.due-pill {
+  font-size: 0.75rem;
+  font-weight: 700;
+  padding: 0.2rem 0.6rem;
+  border-radius: 999px;
+}
+
+.due-pill.overdue {
+  background: #ffebe6;
+  color: #bf2600;
+}
+
+.due-pill.today {
+  background: #fffae6;
+  color: #974f0c;
+}
+
+[data-theme="dark"] .due-pill.overdue {
+  background: rgba(191, 38, 0, 0.2);
+  color: #ff7452;
+}
+
+[data-theme="dark"] .due-pill.today {
+  background: rgba(255, 171, 0, 0.15);
+  color: #ffab00;
+}
+
+.due-banner-toggle {
+  font-size: 0.75rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  padding: 0;
+}
+
+.due-banner-list {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.4rem;
+  padding: 0.5rem 1rem 0.75rem;
+  border-top: 1px solid var(--border);
+}
+
+.due-task-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.65rem;
+  border-radius: 6px;
+  border: 1px solid transparent;
+  font-size: 0.8rem;
+  cursor: pointer;
+  font-family: inherit;
+  transition: opacity 0.15s;
+}
+
+.due-task-chip:hover {
+  opacity: 0.8;
+}
+
+.due-task-chip.overdue {
+  background: #ffebe6;
+  color: #bf2600;
+  border-color: #ffbdad;
+}
+
+.due-task-chip.today {
+  background: #fffae6;
+  color: #974f0c;
+  border-color: #ffe380;
+}
+
+[data-theme="dark"] .due-task-chip.overdue {
+  background: rgba(191, 38, 0, 0.15);
+  color: #ff7452;
+  border-color: rgba(191, 38, 0, 0.3);
+}
+
+[data-theme="dark"] .due-task-chip.today {
+  background: rgba(255, 171, 0, 0.1);
+  color: #ffab00;
+  border-color: rgba(255, 171, 0, 0.25);
+}
+
+.due-chip-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: 50%;
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+.due-chip-date {
+  font-size: 0.72rem;
+  opacity: 0.75;
+}

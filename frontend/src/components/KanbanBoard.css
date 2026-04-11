@@ -137,6 +137,35 @@
   text-transform: uppercase;
 }
 
+/* ── Subtask progress bar on card ───────────────────────────────── */
+.kanban-subtask-progress {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  margin: 0.4rem 0;
+}
+
+.kanban-subtask-bar {
+  flex: 1;
+  height: 4px;
+  background: #dfe1e6;
+  border-radius: 2px;
+  overflow: hidden;
+}
+
+.kanban-subtask-fill {
+  height: 100%;
+  background: #36b37e;
+  border-radius: 2px;
+  transition: width 0.3s ease;
+}
+
+.kanban-subtask-count {
+  font-size: 0.65rem;
+  color: #5e6c84;
+  white-space: nowrap;
+}
+
 /* ── Card editing state ─────────────────────────────────────────── */
 .kanban-card-editing {
   cursor: default;

@@ -7,6 +7,7 @@ import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
 import KanbanBoard from './components/KanbanBoard';
 import StatsBar from './components/StatsBar';
+import DueDateBanner from './components/DueDateBanner';
 import FilterBar from './components/FilterBar';
 import AnalyticsPanel from './components/AnalyticsPanel';
 import ProtectedRoute from './components/ProtectedRoute';
@@ -24,6 +25,7 @@ function Dashboard() {
   const [search, setSearch] = useState('');
   const [filterPriority, setFilterPriority] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
+  const [sort, setSort] = useState('');
   const { logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -40,6 +42,9 @@ function Dashboard() {
 
   useEffect(() => { refreshTasks(); }, []);
 
+  const PRIORITY_ORDER = { urgent: 0, high: 1, medium: 2, low: 3 };
+  const STATUS_ORDER = { todo: 0, in_progress: 1, done: 2 };
+
   const filteredTasks = tasks.filter((t) => {
     if (search) {
       const q = search.toLowerCase();
@@ -48,6 +53,17 @@ function Dashboard() {
     if (filterPriority && t.priority !== filterPriority) return false;
     if (filterStatus && t.status !== filterStatus) return false;
     return true;
+  }).sort((a, b) => {
+    if (sort === 'due_asc') {
+      if (!a.due_date && !b.due_date) return 0;
+      if (!a.due_date) return 1;
+      if (!b.due_date) return -1;
+      return new Date(a.due_date) - new Date(b.due_date);
+    }
+    if (sort === 'priority_desc') return PRIORITY_ORDER[a.priority] - PRIORITY_ORDER[b.priority];
+    if (sort === 'title_asc') return a.title.localeCompare(b.title);
+    if (sort === 'status') return STATUS_ORDER[a.status] - STATUS_ORDER[b.status];
+    return new Date(b.created_at) - new Date(a.created_at);
   });
 
   const clearFilters = () => { setSearch(''); setFilterPriority(''); setFilterStatus(''); };
@@ -71,6 +87,7 @@ function Dashboard() {
       <main className="app-main">
         {error && <p className="error banner">{error}</p>}
         <StatsBar tasks={tasks} />
+        <DueDateBanner tasks={tasks} onRefresh={refreshTasks} />
         <TaskForm onCreated={refreshTasks} />
         <AnalyticsPanel />
         <FilterBar
@@ -80,6 +97,8 @@ function Dashboard() {
           onPriorityChange={setFilterPriority}
           status={filterStatus}
           onStatusChange={setFilterStatus}
+          sort={sort}
+          onSortChange={setSort}
           onClear={clearFilters}
           taskCount={filteredTasks.length}
         />

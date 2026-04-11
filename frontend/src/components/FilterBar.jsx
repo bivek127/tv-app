@@ -4,7 +4,7 @@ import './FilterBar.css';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-function FilterBar({ search, onSearchChange, priority, onPriorityChange, status, onStatusChange, onClear, taskCount }) {
+function FilterBar({ search, onSearchChange, priority, onPriorityChange, status, onStatusChange, sort, onSortChange, onClear, taskCount }) {
     const [exporting, setExporting] = useState(false);
 
     const handleExport = async () => {
@@ -58,6 +58,13 @@ function FilterBar({ search, onSearchChange, priority, onPriorityChange, status,
                 <option value="todo">To Do</option>
                 <option value="in_progress">In Progress</option>
                 <option value="done">Done</option>
+            </select>
+            <select value={sort} onChange={(e) => onSortChange(e.target.value)} className="filter-select">
+                <option value="">Sort: Default</option>
+                <option value="due_asc">Due Date ↑</option>
+                <option value="priority_desc">Priority ↓</option>
+                <option value="title_asc">Title A–Z</option>
+                <option value="status">Status</option>
             </select>
             {(search || priority || status) && (
                 <button onClick={onClear} className="filter-clear">Clear</button>
