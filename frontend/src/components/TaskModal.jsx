@@ -1,6 +1,8 @@
 import { useState, useEffect } from 'react';
 import { updateTask, deleteTask } from '../api/tasks';
+import { getLabelsForTask } from '../api/labels';
 import Checklist from './Checklist';
+import LabelManager from './LabelManager';
 import './TaskModal.css';
 
 const PRIORITY_COLORS = {
@@ -19,6 +21,13 @@ function TaskModal({ task, onClose, onRefresh }) {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState('');
     const [dirty, setDirty] = useState(false);
+    const [taskLabels, setTaskLabels] = useState(task.labels || []);
+
+    const refreshLabels = () => {
+        getLabelsForTask(task.id).then(setTaskLabels).catch(() => {});
+    };
+
+    useEffect(() => { refreshLabels(); }, [task.id]);
 
     // Close on Escape
     useEffect(() => {
@@ -132,9 +141,10 @@ function TaskModal({ task, onClose, onRefresh }) {
                         </div>
                     </div>
 
-                    {/* Right column — checklist */}
+                    {/* Right column — checklist + labels */}
                     <div className="modal-right">
                         <Checklist taskId={task.id} />
+                        <LabelManager taskId={task.id} taskLabels={taskLabels} onLabelsChange={refreshLabels} />
                     </div>
                 </div>
             </div>

@@ -137,6 +137,29 @@
   text-transform: uppercase;
 }
 
+/* ── Label chips on card ────────────────────────────────────────── */
+.kanban-card-labels {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.25rem;
+  margin-top: 0.35rem;
+}
+
+.kanban-label-chip {
+  font-size: 0.6rem;
+  font-weight: 600;
+  color: #fff;
+  padding: 0.1rem 0.4rem;
+  border-radius: 999px;
+  white-space: nowrap;
+}
+
+.kanban-label-more {
+  font-size: 0.6rem;
+  color: var(--text-secondary);
+  padding: 0.1rem 0.3rem;
+}
+
 /* ── Subtask progress bar on card ───────────────────────────────── */
 .kanban-subtask-progress {
   display: flex;

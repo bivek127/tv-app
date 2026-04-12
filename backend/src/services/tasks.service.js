@@ -4,19 +4,35 @@ const pool = require('../db');
  * Fetch all tasks belonging to a specific user.
  */
 async function getAllTasks(userId, search) {
+    let query, params;
     if (search) {
-        const result = await pool.query(
-            `SELECT * FROM tasks
-             WHERE user_id = $1 AND (title ILIKE $2 OR description ILIKE $2)
-             ORDER BY created_at DESC`,
-            [userId, `%${search}%`]
-        );
-        return result.rows;
+        query = `SELECT t.*,
+                    COALESCE(
+                        json_agg(json_build_object('id', l.id, 'name', l.name, 'color', l.color))
+                        FILTER (WHERE l.id IS NOT NULL), '[]'
+                    ) AS labels
+                 FROM tasks t
+                 LEFT JOIN task_labels tl ON tl.task_id = t.id
+                 LEFT JOIN labels l ON l.id = tl.label_id
+                 WHERE t.user_id = $1 AND (t.title ILIKE $2 OR t.description ILIKE $2)
+                 GROUP BY t.id
+                 ORDER BY t.created_at DESC`;
+        params = [userId, `%${search}%`];
+    } else {
+        query = `SELECT t.*,
+                    COALESCE(
+                        json_agg(json_build_object('id', l.id, 'name', l.name, 'color', l.color))
+                        FILTER (WHERE l.id IS NOT NULL), '[]'
+                    ) AS labels
+                 FROM tasks t
+                 LEFT JOIN task_labels tl ON tl.task_id = t.id
+                 LEFT JOIN labels l ON l.id = tl.label_id
+                 WHERE t.user_id = $1
+                 GROUP BY t.id
+                 ORDER BY t.created_at DESC`;
+        params = [userId];
     }
-    const result = await pool.query(
-        'SELECT * FROM tasks WHERE user_id = $1 ORDER BY created_at DESC',
-        [userId]
-    );
+    const result = await pool.query(query, params);
     return result.rows;
 }
 

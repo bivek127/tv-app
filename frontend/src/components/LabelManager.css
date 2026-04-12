@@ -1,0 +1,149 @@
+.label-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.label-manager-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.label-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.label-chip {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.label-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 5px;
+}
+
+.label-row.assigned {
+  background: var(--surface);
+}
+
+.label-toggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-family: inherit;
+  text-align: left;
+}
+
+.label-toggle:hover {
+  background: var(--surface);
+  border-radius: 4px;
+}
+
+.label-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.label-name {
+  flex: 1;
+}
+
+.label-check {
+  font-size: 0.75rem;
+  color: var(--primary-blue);
+  font-weight: 700;
+}
+
+.label-delete {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 0.3rem;
+  line-height: 1;
+}
+
+.label-delete:hover {
+  color: #ef4444;
+}
+
+.label-create {
+  display: flex;
+  flex-direction: column;
+  gap: 0.35rem;
+  border-top: 1px solid var(--border);
+  padding-top: 0.5rem;
+}
+
+.label-create-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+.label-create-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+}
+
+.label-color-picker {
+  display: flex;
+  gap: 0.3rem;
+}
+
+.label-color-swatch {
+  width: 18px;
+  height: 18px;
+  border-radius: 50%;
+  border: 2px solid transparent;
+  cursor: pointer;
+  padding: 0;
+}
+
+.label-color-swatch.selected {
+  border-color: var(--text-primary);
+  box-shadow: 0 0 0 1px var(--bg);
+}
+
+.label-create-btn {
+  align-self: flex-start;
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+}

@@ -1,10 +1,16 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { getToken } from '../lib/apiClient';
+import { getLabels } from '../api/labels';
 import './FilterBar.css';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-function FilterBar({ search, onSearchChange, priority, onPriorityChange, status, onStatusChange, sort, onSortChange, onClear, taskCount }) {
+function FilterBar({ search, onSearchChange, priority, onPriorityChange, status, onStatusChange, sort, onSortChange, labelFilter, onLabelFilterChange, onClear, taskCount }) {
+    const [labels, setLabels] = useState([]);
+
+    useEffect(() => {
+        getLabels().then(setLabels).catch(() => {});
+    }, []);
     const [exporting, setExporting] = useState(false);
 
     const handleExport = async () => {
@@ -59,6 +65,14 @@ function FilterBar({ search, onSearchChange, priority, onPriorityChange, status,
                 <option value="in_progress">In Progress</option>
                 <option value="done">Done</option>
             </select>
+            {labels.length > 0 && (
+                <select value={labelFilter} onChange={(e) => onLabelFilterChange(e.target.value)} className="filter-select">
+                    <option value="">All Labels</option>
+                    {labels.map((l) => (
+                        <option key={l.id} value={l.id}>{l.name}</option>
+                    ))}
+                </select>
+            )}
             <select value={sort} onChange={(e) => onSortChange(e.target.value)} className="filter-select">
                 <option value="">Sort: Default</option>
                 <option value="due_asc">Due Date ↑</option>
@@ -66,7 +80,7 @@ function FilterBar({ search, onSearchChange, priority, onPriorityChange, status,
                 <option value="title_asc">Title A–Z</option>
                 <option value="status">Status</option>
             </select>
-            {(search || priority || status) && (
+            {(search || priority || status || labelFilter) && (
                 <button onClick={onClear} className="filter-clear">Clear</button>
             )}
             <span className="filter-count">{taskCount} tasks found</span>

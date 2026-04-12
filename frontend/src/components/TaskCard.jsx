@@ -77,6 +77,16 @@ function TaskCard({ task, onRefresh }) {
                         <span className="kanban-subtask-count">{subtaskStats.completed}/{subtaskStats.total}</span>
                     </div>
                 )}
+                {task.labels && task.labels.length > 0 && (
+                    <div className="kanban-card-labels">
+                        {task.labels.slice(0, 3).map((l) => (
+                            <span key={l.id} className="kanban-label-chip" style={{ background: l.color }}>{l.name}</span>
+                        ))}
+                        {task.labels.length > 3 && (
+                            <span className="kanban-label-more">+{task.labels.length - 3}</span>
+                        )}
+                    </div>
+                )}
                 <div className="kanban-card-meta">
                     <span
                         className="kanban-priority-badge"

@@ -27,6 +27,7 @@ function Dashboard() {
   const [filterPriority, setFilterPriority] = useState('');
   const [filterStatus, setFilterStatus] = useState('');
   const [sort, setSort] = useState('');
+  const [labelFilter, setLabelFilter] = useState('');
   const { logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -53,6 +54,7 @@ function Dashboard() {
     }
     if (filterPriority && t.priority !== filterPriority) return false;
     if (filterStatus && t.status !== filterStatus) return false;
+    if (labelFilter && !(t.labels || []).some((l) => l.id === labelFilter)) return false;
     return true;
   }).sort((a, b) => {
     if (sort === 'due_asc') {
@@ -67,7 +69,7 @@ function Dashboard() {
     return new Date(b.created_at) - new Date(a.created_at);
   });
 
-  const clearFilters = () => { setSearch(''); setFilterPriority(''); setFilterStatus(''); };
+  const clearFilters = () => { setSearch(''); setFilterPriority(''); setFilterStatus(''); setLabelFilter(''); };
 
   const handleLogout = () => {
     logout();
@@ -101,6 +103,8 @@ function Dashboard() {
           onStatusChange={setFilterStatus}
           sort={sort}
           onSortChange={setSort}
+          labelFilter={labelFilter}
+          onLabelFilterChange={setLabelFilter}
           onClear={clearFilters}
           taskCount={filteredTasks.length}
         />
