@@ -1,0 +1,251 @@
+.label-manager {
+  display: flex;
+  flex-direction: column;
+  gap: 0.6rem;
+}
+
+.label-manager-title {
+  font-size: 0.85rem;
+  font-weight: 700;
+  color: var(--text-primary);
+  margin: 0;
+}
+
+.label-chips {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 0.3rem;
+}
+
+.label-chip {
+  display: inline-block;
+  padding: 0.15rem 0.5rem;
+  border-radius: 999px;
+  font-size: 0.7rem;
+  font-weight: 600;
+  color: #fff;
+  white-space: nowrap;
+}
+
+.label-list {
+  display: flex;
+  flex-direction: column;
+  gap: 0.2rem;
+  max-height: 160px;
+  overflow-y: auto;
+}
+
+.label-row {
+  display: flex;
+  align-items: center;
+  gap: 0.25rem;
+  border-radius: 5px;
+}
+
+.label-row.assigned {
+  background: var(--surface);
+}
+
+.label-toggle {
+  flex: 1;
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.3rem 0.4rem;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: var(--text-primary);
+  font-size: 0.8rem;
+  font-family: inherit;
+  text-align: left;
+}
+
+.label-toggle:hover {
+  background: var(--surface);
+  border-radius: 4px;
+}
+
+.label-dot {
+  width: 10px;
+  height: 10px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.label-name {
+  flex: 1;
+}
+
+.label-check {
+  font-size: 0.75rem;
+  color: var(--primary-blue);
+  font-weight: 700;
+}
+
+.label-delete {
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  cursor: pointer;
+  font-size: 1rem;
+  padding: 0 0.3rem;
+  line-height: 1;
+}
+
+.label-delete:hover {
+  color: #ef4444;
+}
+
+.label-create {
+  border-top: 1px solid var(--border);
+  padding-top: 0.5rem;
+}
+
+.label-create-row {
+  display: flex;
+  align-items: center;
+  gap: 0.4rem;
+}
+
+/* ── Color picker anchor + trigger ── */
+.label-picker-anchor {
+  position: relative;
+  flex-shrink: 0;
+}
+
+.label-color-trigger {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  padding: 0;
+  cursor: pointer;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.label-color-trigger:hover {
+  transform: scale(1.1);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.15);
+}
+
+/* ── Popover ── */
+.label-color-popover {
+  position: absolute;
+  top: calc(100% + 6px);
+  left: 0;
+  z-index: 1000;
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  padding: 0.6rem;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+  width: 220px;
+}
+
+/* ── Preset grid: 4 columns ── */
+.label-preset-grid {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  gap: 0.35rem;
+  margin-bottom: 0.5rem;
+}
+
+.label-preset-swatch {
+  width: 28px;
+  height: 28px;
+  border-radius: 50%;
+  border: none;
+  padding: 0;
+  cursor: pointer;
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: transform 0.12s, box-shadow 0.12s;
+}
+
+.label-preset-swatch:hover {
+  transform: scale(1.15);
+  box-shadow: 0 0 0 3px rgba(255, 255, 255, 0.3), 0 0 0 5px rgba(0, 0, 0, 0.15);
+}
+
+.label-preset-swatch.selected {
+  box-shadow: 0 0 0 2px var(--card-bg), 0 0 0 4px currentColor;
+}
+
+.label-swatch-check {
+  font-size: 0.7rem;
+  color: #fff;
+  font-weight: 700;
+  text-shadow: 0 1px 2px rgba(0, 0, 0, 0.4);
+  pointer-events: none;
+}
+
+/* ── Custom color row ── */
+.label-custom-row {
+  border-top: 1px solid var(--border);
+  padding-top: 0.4rem;
+  display: flex;
+  align-items: center;
+}
+
+.label-custom-btn {
+  display: flex;
+  align-items: center;
+  gap: 0.35rem;
+  background: none;
+  border: none;
+  color: var(--text-secondary);
+  font-size: 0.75rem;
+  cursor: pointer;
+  padding: 0.2rem 0.3rem;
+  border-radius: 4px;
+  font-family: inherit;
+  width: 100%;
+}
+
+.label-custom-btn:hover {
+  background: var(--surface);
+  color: var(--text-primary);
+}
+
+.label-custom-icon {
+  font-size: 0.65rem;
+  background: linear-gradient(135deg, #ef4444, #6366f1, #10b981);
+  -webkit-background-clip: text;
+  -webkit-text-fill-color: transparent;
+  background-clip: text;
+}
+
+.label-custom-input {
+  width: 0;
+  height: 0;
+  opacity: 0;
+  position: absolute;
+  pointer-events: none;
+}
+
+.label-create-input {
+  flex: 1;
+  min-width: 0;
+  padding: 0.35rem 0.5rem;
+  font-size: 0.8rem;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: inherit;
+}
+
+.label-create-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+}
+
+.label-create-btn {
+  padding: 0.3rem 0.7rem;
+  font-size: 0.78rem;
+  cursor: pointer;
+  flex-shrink: 0;
+}

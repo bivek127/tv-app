@@ -1,0 +1,97 @@
+.cwp {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.55rem;
+  padding-top: 0.5rem;
+}
+
+/* ── Wheel canvas ─────────────────────────────────────────────── */
+
+.cwp-wheel {
+  display: block;
+  border-radius: 50%;
+  border: 1px solid var(--border);
+  cursor: crosshair;
+  /* prevent text selection while dragging */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+/* ── Hue slider canvas ────────────────────────────────────────── */
+
+.cwp-slider {
+  display: block;
+  border-radius: 999px;
+  border: 1px solid var(--border);
+  cursor: pointer;
+  user-select: none;
+  -webkit-user-select: none;
+  width: 100%;
+}
+
+/* ── Bottom row: preview + RGB inputs ─────────────────────────── */
+
+.cwp-bottom {
+  display: flex;
+  align-items: center;
+  gap: 0.5rem;
+  width: 100%;
+}
+
+.cwp-preview {
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  border: 2px solid var(--border);
+  flex-shrink: 0;
+}
+
+.cwp-rgb {
+  display: flex;
+  gap: 0.3rem;
+  flex: 1;
+}
+
+.cwp-rgb-field {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 0.15rem;
+  flex: 1;
+}
+
+.cwp-rgb-input {
+  width: 100%;
+  box-sizing: border-box;
+  padding: 0.25rem 0.2rem;
+  font-size: 0.75rem;
+  text-align: center;
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  background: var(--surface);
+  color: var(--text-primary);
+  font-family: inherit;
+  /* hide native number spinners */
+  -moz-appearance: textfield;
+}
+
+.cwp-rgb-input::-webkit-inner-spin-button,
+.cwp-rgb-input::-webkit-outer-spin-button {
+  -webkit-appearance: none;
+  margin: 0;
+}
+
+.cwp-rgb-input:focus {
+  outline: none;
+  border-color: var(--primary-blue);
+  box-shadow: 0 0 0 2px var(--primary-glow);
+}
+
+.cwp-rgb-label {
+  font-size: 0.6rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  color: var(--text-secondary);
+}
