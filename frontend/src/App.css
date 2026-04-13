@@ -452,6 +452,34 @@ select:focus {
 /* Due date badge */
 .badge.due-date { background: var(--surface); color: var(--text-primary); }
 
+/* Label chips in list view */
+.badge.label-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.25rem;
+  font-size: 11px;
+  text-transform: none;
+  background: var(--bg-primary, #fff);
+  color: var(--text-primary, #172b4d);
+  border: 1px solid var(--border, #dfe1e6);
+  border-radius: 999px;
+  padding: 2px 6px;
+}
+
+.label-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  flex-shrink: 0;
+}
+
+.badge.label-more {
+  font-size: 11px;
+  text-transform: none;
+  color: var(--text-secondary);
+  background: transparent;
+}
+
 /* Priority left border on task item */
 .task-item.priority-low    { border-left: 3px solid var(--accent-green);    }
 .task-item.priority-medium { border-left: 3px solid var(--accent-amber);    }

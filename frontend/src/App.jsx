@@ -55,7 +55,7 @@ function Dashboard() {
     }
     if (filterPriority && t.priority !== filterPriority) return false;
     if (filterStatus && t.status !== filterStatus) return false;
-    if (labelFilter && !(t.labels || []).some((l) => l.id === labelFilter)) return false;
+    if (labelFilter && !(t.labels || []).some((l) => l.id === Number(labelFilter))) return false;
     return true;
   }).sort((a, b) => {
     if (sort === 'due_asc') {
