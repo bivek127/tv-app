@@ -10,6 +10,7 @@ import StatsBar from './components/StatsBar';
 import DueDateBanner from './components/DueDateBanner';
 import FilterBar from './components/FilterBar';
 import AnalyticsPanel from './components/AnalyticsPanel';
+import ActivityFeed from './components/ActivityFeed';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -94,6 +95,7 @@ function Dashboard() {
         <DueDateBanner tasks={tasks} onRefresh={refreshTasks} />
         <TaskForm onCreated={refreshTasks} />
         <AnalyticsPanel />
+        <ActivityFeed />
         <FilterBar
           search={search}
           onSearchChange={setSearch}
