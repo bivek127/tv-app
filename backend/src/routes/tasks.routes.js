@@ -2,7 +2,7 @@ const express = require('express');
 const router = express.Router();
 const tasksController = require('../controllers/tasks.controller');
 const subtasksController = require('../controllers/subtasks.controller');
-const { validateBody, validateParams, createTaskSchema, updateTaskSchema, uuidParamSchema } = require('../validation/schemas');
+const { validateBody, validateParams, createTaskSchema, updateTaskSchema, uuidParamSchema, createSubtaskSchema, updateSubtaskSchema } = require('../validation/schemas');
 
 router.get('/export', tasksController.exportCsv);
 router.get('/stats', tasksController.getStats);
@@ -13,8 +13,8 @@ router.delete('/:id', validateParams(uuidParamSchema), tasksController.deleteTas
 
 // Subtask routes
 router.get('/:taskId/subtasks', subtasksController.getSubtasks);
-router.post('/:taskId/subtasks', subtasksController.createSubtask);
-router.patch('/:taskId/subtasks/:subtaskId', subtasksController.updateSubtask);
+router.post('/:taskId/subtasks', validateBody(createSubtaskSchema), subtasksController.createSubtask);
+router.patch('/:taskId/subtasks/:subtaskId', validateBody(updateSubtaskSchema), subtasksController.updateSubtask);
 router.delete('/:taskId/subtasks/:subtaskId', subtasksController.deleteSubtask);
 
 module.exports = router;

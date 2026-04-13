@@ -42,6 +42,30 @@ const updateTaskSchema = z.object({
     due_date:    z.string().date('Invalid date format').nullable().optional(),
 });
 
+// ── Subtasks ──────────────────────────────────────────────────────
+
+const createSubtaskSchema = z.object({
+    title: z.string().min(1, 'Title is required').max(500, 'Title too long'),
+});
+
+const updateSubtaskSchema = z.object({
+    title:     z.string().min(1, 'Title is required').max(500, 'Title too long').optional(),
+    completed: z.boolean().optional(),
+}).refine((d) => d.title !== undefined || d.completed !== undefined, {
+    message: 'At least one field (title or completed) is required',
+});
+
+// ── Profile ───────────────────────────────────────────────────────
+
+const updateProfileSchema = z.object({
+    name: z.string().min(1, 'Name is required').max(100, 'Name too long').nullable().optional(),
+});
+
+const updatePasswordSchema = z.object({
+    currentPassword: z.string().min(1, 'Current password is required'),
+    newPassword:     z.string().min(8, 'New password must be at least 8 characters'),
+});
+
 // ── Params ────────────────────────────────────────────────────────
 
 const uuidParamSchema = z.object({
@@ -88,6 +112,10 @@ module.exports = {
     resetPasswordSchema,
     createTaskSchema,
     updateTaskSchema,
+    createSubtaskSchema,
+    updateSubtaskSchema,
+    updateProfileSchema,
+    updatePasswordSchema,
     uuidParamSchema,
     validateBody,
     validateParams,
