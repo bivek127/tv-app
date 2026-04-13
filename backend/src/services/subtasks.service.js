@@ -21,11 +21,11 @@ async function createSubtask(taskId, title) {
     return result.rows[0];
 }
 
-async function updateSubtask(subtaskId, taskId, { title, completed }) {
+async function updateSubtask(subtaskId, taskId, { title, completed, position }) {
     const result = await pool.query(
-        `UPDATE subtasks SET title = COALESCE($1, title), completed = COALESCE($2, completed)
-         WHERE id = $3 AND task_id = $4 RETURNING *`,
-        [title ?? null, completed ?? null, subtaskId, taskId]
+        `UPDATE subtasks SET title = COALESCE($1, title), completed = COALESCE($2, completed), position = COALESCE($3, position)
+         WHERE id = $4 AND task_id = $5 RETURNING *`,
+        [title ?? null, completed ?? null, position ?? null, subtaskId, taskId]
     );
     return result.rows[0] || null;
 }

@@ -51,8 +51,9 @@ const createSubtaskSchema = z.object({
 const updateSubtaskSchema = z.object({
     title:     z.string().min(1, 'Title is required').max(500, 'Title too long').optional(),
     completed: z.boolean().optional(),
-}).refine((d) => d.title !== undefined || d.completed !== undefined, {
-    message: 'At least one field (title or completed) is required',
+    position:  z.number().int().min(0).optional(),
+}).refine((d) => d.title !== undefined || d.completed !== undefined || d.position !== undefined, {
+    message: 'At least one field (title, completed, or position) is required',
 });
 
 // ── Profile ───────────────────────────────────────────────────────
