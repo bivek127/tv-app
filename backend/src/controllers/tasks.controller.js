@@ -5,9 +5,13 @@ const { logActivity } = require('../services/activity.service');
 
 async function getTasks(req, res, next) {
     try {
-        const search = req.query.search || null;
-        const tasks = await tasksService.getAllTasks(req.user.id, search);
-        res.json({ success: true, data: tasks });
+        const { search, cursor, limit = 20 } = req.query;
+        const result = await tasksService.getAllTasks(req.user.id, {
+            search: search || null,
+            cursor: cursor || null,
+            limit: Number(limit),
+        });
+        res.json({ success: true, data: result });
     } catch (err) {
         next(err);
     }
@@ -56,7 +60,7 @@ async function deleteTask(req, res, next) {
 async function exportCsv(req, res, next) {
     try {
         const search = req.query.search || null;
-        const tasks = await tasksService.getAllTasks(req.user.id, search);
+        const tasks = await tasksService.getAllTasks(req.user.id, { search });
 
         const escapeField = (val) => {
             if (val == null) return '';
