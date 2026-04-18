@@ -2,12 +2,18 @@ const { verifyAccessToken } = require('../utils/token');
 
 function authenticate(req, res, next) {
     const authHeader = req.headers['authorization'];
+    let token = null;
 
-    if (!authHeader || !authHeader.startsWith('Bearer ')) {
-        return res.status(401).json({ error: 'Authorization header missing or malformed' });
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+        token = authHeader.slice(7);
+    } else if (req.path === '/events' && req.query.token) {
+        // EventSource cannot set custom headers — allow token as query param for SSE only.
+        token = req.query.token;
     }
 
-    const token = authHeader.slice(7);
+    if (!token) {
+        return res.status(401).json({ error: 'Authorization header missing or malformed' });
+    }
 
     try {
         const payload = verifyAccessToken(token);

@@ -1,5 +1,6 @@
 const tasksService = require('../services/tasks.service');
 const { logActivity } = require('../services/activity.service');
+const { sendToUser } = require('../services/sse.service');
 
 // req.user is guaranteed by auth.middleware; req.body/params validated by Zod middleware.
 
@@ -22,6 +23,7 @@ async function createTask(req, res, next) {
         const { title, description, priority, status, due_date } = req.body;
         const task = await tasksService.createTask(req.user.id, title, description, priority, status, due_date);
         logActivity({ userId: req.user.id, action: 'task_created', entityType: 'task', entityId: task.id });
+        sendToUser(req.user.id, 'task_created', task);
         res.status(201).json({ success: true, data: task });
     } catch (err) {
         next(err);
@@ -37,6 +39,7 @@ async function updateTask(req, res, next) {
             return res.status(404).json({ success: false, error: 'Task not found' });
         }
         logActivity({ userId: req.user.id, action: 'task_updated', entityType: 'task', entityId: task.id });
+        sendToUser(req.user.id, 'task_updated', task);
         res.json({ success: true, data: task });
     } catch (err) {
         next(err);
@@ -51,6 +54,7 @@ async function deleteTask(req, res, next) {
             return res.status(404).json({ success: false, error: 'Task not found' });
         }
         logActivity({ userId: req.user.id, action: 'task_deleted', entityType: 'task', entityId: id });
+        sendToUser(req.user.id, 'task_deleted', { id });
         res.status(204).send();
     } catch (err) {
         next(err);

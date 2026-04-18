@@ -1,8 +1,9 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { useTheme } from './context/ThemeContext';
 import { getTasks } from './api/tasks';
+import { useSSE } from './hooks/useSSE';
 import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
 import KanbanBoard from './components/KanbanBoard';
@@ -62,6 +63,18 @@ function Dashboard() {
   };
 
   useEffect(() => { refreshTasks(); }, []);
+
+  const handleSSE = useCallback((event) => {
+    if (event.type === 'task_created') {
+      setTasks((prev) => prev.some((t) => t.id === event.payload.id) ? prev : [event.payload, ...prev]);
+    } else if (event.type === 'task_updated') {
+      setTasks((prev) => prev.map((t) => t.id === event.payload.id ? { ...t, ...event.payload } : t));
+    } else if (event.type === 'task_deleted') {
+      setTasks((prev) => prev.filter((t) => t.id !== event.payload.id));
+    }
+  }, []);
+
+  const { isConnected } = useSSE(handleSSE);
 
   const PRIORITY_ORDER = { urgent: 0, high: 1, medium: 2, low: 3 };
   const STATUS_ORDER = { todo: 0, in_progress: 1, done: 2 };
@@ -134,9 +147,15 @@ function Dashboard() {
         <section className="task-section">
           <div className="task-section-header">
             <h2>Tasks ({filteredTasks.length})</h2>
-            <div className="view-toggle">
-              <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>Board</button>
-              <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>List</button>
+            <div className="task-section-right">
+              <span className={`live-indicator ${isConnected ? 'on' : 'off'}`} title={isConnected ? 'Real-time updates active' : 'Reconnecting…'}>
+                <span className="live-dot" />
+                {isConnected ? 'Live' : 'Reconnecting…'}
+              </span>
+              <div className="view-toggle">
+                <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>Board</button>
+                <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>List</button>
+              </div>
             </div>
           </div>
           {view === 'board' ? (
