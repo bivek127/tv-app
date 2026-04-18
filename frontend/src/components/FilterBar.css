@@ -34,6 +34,28 @@
   box-shadow: 0 0 0 3px var(--primary-glow);
 }
 
+.filter-toggle {
+  padding: 0.5rem 0.75rem;
+  font-size: 0.8rem;
+  background: var(--surface);
+  color: var(--text-primary);
+  border: 1px solid var(--border);
+  border-radius: 5px;
+  cursor: pointer;
+  white-space: nowrap;
+  transition: background 0.15s, border-color 0.15s;
+}
+
+.filter-toggle:hover {
+  background: var(--bg);
+}
+
+.filter-toggle.active {
+  background: #fef3c7;
+  color: #92400e;
+  border-color: #fcd34d;
+}
+
 .filter-clear {
   padding: 0.5rem 0.75rem;
   background: var(--surface);

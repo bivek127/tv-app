@@ -28,7 +28,18 @@ async function getAllTasks(userId, { search, cursor, limit } = {}) {
                     COALESCE(
                         json_agg(json_build_object('id', l.id, 'name', l.name, 'color', l.color))
                         FILTER (WHERE l.id IS NOT NULL), '[]'
-                    ) AS labels
+                    ) AS labels,
+                    COALESCE((
+                        SELECT COUNT(*)::int
+                        FROM task_dependencies td
+                        JOIN tasks blocker ON blocker.id = td.blocking_task_id
+                        WHERE td.blocked_task_id = t.id AND blocker.status != 'done'
+                    ), 0) AS blocked_by_count,
+                    EXISTS (
+                        SELECT 1 FROM task_dependencies td
+                        JOIN tasks blocker ON blocker.id = td.blocking_task_id
+                        WHERE td.blocked_task_id = t.id AND blocker.status != 'done'
+                    ) AS is_blocked
                  FROM tasks t
                  LEFT JOIN task_labels tl ON tl.task_id = t.id
                  LEFT JOIN labels l ON l.id = tl.label_id

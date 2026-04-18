@@ -31,6 +31,7 @@ function Dashboard() {
   const [filterStatus, setFilterStatus] = useState('');
   const [sort, setSort] = useState('');
   const [labelFilter, setLabelFilter] = useState('');
+  const [blockedOnly, setBlockedOnly] = useState(false);
   const { logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const navigate = useNavigate();
@@ -73,6 +74,7 @@ function Dashboard() {
     if (filterPriority && t.priority !== filterPriority) return false;
     if (filterStatus && t.status !== filterStatus) return false;
     if (labelFilter && !(t.labels || []).some((l) => l.id === Number(labelFilter))) return false;
+    if (blockedOnly && !(t.blocked_by_count > 0)) return false;
     return true;
   }).sort((a, b) => {
     if (sort === 'due_asc') {
@@ -87,7 +89,7 @@ function Dashboard() {
     return new Date(b.created_at) - new Date(a.created_at);
   });
 
-  const clearFilters = () => { setSearch(''); setFilterPriority(''); setFilterStatus(''); setLabelFilter(''); };
+  const clearFilters = () => { setSearch(''); setFilterPriority(''); setFilterStatus(''); setLabelFilter(''); setBlockedOnly(false); };
 
   const handleLogout = () => {
     logout();
@@ -124,6 +126,8 @@ function Dashboard() {
           onSortChange={setSort}
           labelFilter={labelFilter}
           onLabelFilterChange={setLabelFilter}
+          blockedOnly={blockedOnly}
+          onBlockedFilterChange={setBlockedOnly}
           onClear={clearFilters}
           taskCount={filteredTasks.length}
         />
@@ -136,9 +140,9 @@ function Dashboard() {
             </div>
           </div>
           {view === 'board' ? (
-            <KanbanBoard tasks={filteredTasks} onRefresh={refreshTasks} />
+            <KanbanBoard tasks={filteredTasks} onRefresh={refreshTasks} allTasks={tasks} />
           ) : (
-            <TaskList tasks={filteredTasks} onRefresh={refreshTasks} />
+            <TaskList tasks={filteredTasks} onRefresh={refreshTasks} allTasks={tasks} />
           )}
         </section>
         {nextCursor && (

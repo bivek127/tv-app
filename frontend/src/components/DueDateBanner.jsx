@@ -47,6 +47,7 @@ function DueDateBanner({ tasks, onRefresh }) {
             {selectedTask && (
                 <TaskModal
                     task={selectedTask}
+                    allTasks={tasks}
                     onClose={() => setSelectedTask(null)}
                     onRefresh={() => { onRefresh(); setSelectedTask(null); }}
                 />
