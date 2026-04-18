@@ -3,6 +3,7 @@ import { updateTask, deleteTask } from '../api/tasks';
 import { getLabelsForTask } from '../api/labels';
 import Checklist from './Checklist';
 import LabelManager from './LabelManager';
+import DependencyManager from './DependencyManager';
 import './TaskModal.css';
 
 const PRIORITY_COLORS = {
@@ -12,7 +13,7 @@ const PRIORITY_COLORS = {
     low: '#97a0af',
 };
 
-function TaskModal({ task, onClose, onRefresh }) {
+function TaskModal({ task, onClose, onRefresh, allTasks = [] }) {
     const [title, setTitle] = useState(task.title);
     const [description, setDescription] = useState(task.description || '');
     const [priority, setPriority] = useState(task.priority || 'medium');
@@ -141,10 +142,11 @@ function TaskModal({ task, onClose, onRefresh }) {
                         </div>
                     </div>
 
-                    {/* Right column — checklist + labels */}
+                    {/* Right column — checklist + labels + dependencies */}
                     <div className="modal-right">
                         <Checklist taskId={task.id} />
                         <LabelManager taskId={task.id} taskLabels={taskLabels} onLabelsChange={refreshLabels} />
+                        <DependencyManager taskId={task.id} allTasks={allTasks} />
                     </div>
                 </div>
             </div>

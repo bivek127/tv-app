@@ -23,7 +23,7 @@ function isOverdue(task) {
     return new Date(task.due_date) < new Date(new Date().toDateString());
 }
 
-function TaskCard({ task, onRefresh }) {
+function TaskCard({ task, onRefresh, allTasks = [] }) {
     const [modalOpen, setModalOpen] = useState(false);
     const [subtaskStats, setSubtaskStats] = useState({ total: 0, completed: 0 });
 
@@ -36,10 +36,12 @@ function TaskCard({ task, onRefresh }) {
         isDragging,
     } = useSortable({ id: task.id, data: { task } });
 
+    const isBlocked = task.blocked_by_count > 0 && task.status !== 'done';
+
     const style = {
         transform: CSS.Transform.toString(transform),
         transition,
-        opacity: isDragging ? 0.5 : 1,
+        opacity: isDragging ? 0.5 : (isBlocked ? 0.75 : 1),
     };
 
     const loadStats = () => {
@@ -105,12 +107,18 @@ function TaskCard({ task, onRefresh }) {
                     {isOverdue(task) && (
                         <span className="kanban-overdue">Overdue</span>
                     )}
+                    {isBlocked && (
+                        <span className="kanban-blocked" title={`${task.blocked_by_count} incomplete blocker${task.blocked_by_count === 1 ? '' : 's'}`}>
+                            🔒 Blocked
+                        </span>
+                    )}
                 </div>
             </div>
 
             {modalOpen && (
                 <TaskModal
                     task={task}
+                    allTasks={allTasks}
                     onClose={() => { setModalOpen(false); loadStats(); }}
                     onRefresh={() => { onRefresh(); loadStats(); }}
                 />

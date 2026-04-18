@@ -137,6 +137,16 @@
   text-transform: uppercase;
 }
 
+.kanban-blocked {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: #92400e;
+  background: #fef3c7;
+  padding: 0.15rem 0.45rem;
+  border-radius: 3px;
+  text-transform: uppercase;
+}
+
 /* ── Label chips on card ────────────────────────────────────────── */
 .kanban-card-labels {
   display: flex;

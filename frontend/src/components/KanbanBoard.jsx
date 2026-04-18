@@ -11,7 +11,7 @@ const COLUMNS = [
     { id: 'done', label: 'Done' },
 ];
 
-function KanbanBoard({ tasks, onRefresh }) {
+function KanbanBoard({ tasks, onRefresh, allTasks }) {
     const [activeTask, setActiveTask] = useState(null);
 
     const sensors = useSensors(
@@ -98,7 +98,7 @@ function KanbanBoard({ tasks, onRefresh }) {
                                     <p className="kanban-empty">No tasks</p>
                                 ) : (
                                     tasksByStatus[col.id].map((task) => (
-                                        <TaskCard key={task.id} task={task} onRefresh={onRefresh} />
+                                        <TaskCard key={task.id} task={task} onRefresh={onRefresh} allTasks={allTasks} />
                                     ))
                                 )}
                             </div>

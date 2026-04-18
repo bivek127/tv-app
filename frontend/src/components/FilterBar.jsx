@@ -5,7 +5,7 @@ import './FilterBar.css';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-function FilterBar({ search, onSearchChange, priority, onPriorityChange, status, onStatusChange, sort, onSortChange, labelFilter, onLabelFilterChange, onClear, taskCount }) {
+function FilterBar({ search, onSearchChange, priority, onPriorityChange, status, onStatusChange, sort, onSortChange, labelFilter, onLabelFilterChange, blockedOnly, onBlockedFilterChange, onClear, taskCount }) {
     const [labels, setLabels] = useState([]);
 
     useEffect(() => {
@@ -73,6 +73,14 @@ function FilterBar({ search, onSearchChange, priority, onPriorityChange, status,
                     ))}
                 </select>
             )}
+            <button
+                type="button"
+                onClick={() => onBlockedFilterChange(!blockedOnly)}
+                className={`filter-toggle ${blockedOnly ? 'active' : ''}`}
+                title="Show only blocked tasks"
+            >
+                🔒 Blocked only
+            </button>
             <select value={sort} onChange={(e) => onSortChange(e.target.value)} className="filter-select">
                 <option value="">Sort: Default</option>
                 <option value="due_asc">Due Date ↑</option>
@@ -80,7 +88,7 @@ function FilterBar({ search, onSearchChange, priority, onPriorityChange, status,
                 <option value="title_asc">Title A–Z</option>
                 <option value="status">Status</option>
             </select>
-            {(search || priority || status || labelFilter) && (
+            {(search || priority || status || labelFilter || blockedOnly) && (
                 <button onClick={onClear} className="filter-clear">Clear</button>
             )}
             <span className="filter-count">{taskCount} tasks found</span>

@@ -4,7 +4,7 @@ import TaskModal from './TaskModal';
 const PRIORITY_LABELS = { low: 'Low', medium: 'Medium', high: 'High', urgent: 'Urgent' };
 const STATUS_LABELS   = { todo: 'To Do', in_progress: 'In Progress', done: 'Done' };
 
-function TaskItem({ task, onRefresh }) {
+function TaskItem({ task, onRefresh, allTasks }) {
     const [modalOpen, setModalOpen] = useState(false);
 
     return (
@@ -38,6 +38,7 @@ function TaskItem({ task, onRefresh }) {
             {modalOpen && (
                 <TaskModal
                     task={task}
+                    allTasks={allTasks}
                     onClose={() => setModalOpen(false)}
                     onRefresh={() => { onRefresh(); setModalOpen(false); }}
                 />
@@ -46,11 +47,11 @@ function TaskItem({ task, onRefresh }) {
     );
 }
 
-function TaskList({ tasks, onRefresh }) {
+function TaskList({ tasks, onRefresh, allTasks }) {
     if (tasks.length === 0) return <p className="empty">No tasks yet. Add one above!</p>;
     return (
         <ul className="task-list">
-            {tasks.map((task) => <TaskItem key={task.id} task={task} onRefresh={onRefresh} />)}
+            {tasks.map((task) => <TaskItem key={task.id} task={task} onRefresh={onRefresh} allTasks={allTasks} />)}
         </ul>
     );
 }
