@@ -10,6 +10,7 @@ import StatsBar from './components/StatsBar';
 import DueDateBanner from './components/DueDateBanner';
 import FilterBar from './components/FilterBar';
 import AnalyticsPanel from './components/AnalyticsPanel';
+import ActivityFeed from './components/ActivityFeed';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -21,6 +22,8 @@ import './App.css';
 // ── Task dashboard (only rendered when authenticated) ──────────────
 function Dashboard() {
   const [tasks, setTasks] = useState([]);
+  const [nextCursor, setNextCursor] = useState(null);
+  const [loadingMore, setLoadingMore] = useState(false);
   const [error, setError] = useState('');
   const [view, setView] = useState('board');
   const [search, setSearch] = useState('');
@@ -35,10 +38,25 @@ function Dashboard() {
   const refreshTasks = async () => {
     try {
       const data = await getTasks();
-      setTasks(data);
+      setTasks(data.tasks);
+      setNextCursor(data.nextCursor);
       setError('');
     } catch (err) {
       setError(err.message || 'Could not load tasks.');
+    }
+  };
+
+  const loadMore = async () => {
+    if (!nextCursor || loadingMore) return;
+    setLoadingMore(true);
+    try {
+      const data = await getTasks({ cursor: nextCursor });
+      setTasks((prev) => [...prev, ...data.tasks]);
+      setNextCursor(data.nextCursor);
+    } catch (err) {
+      setError(err.message || 'Could not load more tasks.');
+    } finally {
+      setLoadingMore(false);
     }
   };
 
@@ -54,7 +72,7 @@ function Dashboard() {
     }
     if (filterPriority && t.priority !== filterPriority) return false;
     if (filterStatus && t.status !== filterStatus) return false;
-    if (labelFilter && !(t.labels || []).some((l) => l.id === labelFilter)) return false;
+    if (labelFilter && !(t.labels || []).some((l) => l.id === Number(labelFilter))) return false;
     return true;
   }).sort((a, b) => {
     if (sort === 'due_asc') {
@@ -94,6 +112,7 @@ function Dashboard() {
         <DueDateBanner tasks={tasks} onRefresh={refreshTasks} />
         <TaskForm onCreated={refreshTasks} />
         <AnalyticsPanel />
+        <ActivityFeed />
         <FilterBar
           search={search}
           onSearchChange={setSearch}
@@ -122,6 +141,13 @@ function Dashboard() {
             <TaskList tasks={filteredTasks} onRefresh={refreshTasks} />
           )}
         </section>
+        {nextCursor && (
+          <div className="load-more-wrapper">
+            <button className="btn-load-more" onClick={loadMore} disabled={loadingMore}>
+              {loadingMore ? 'Loading...' : 'Load more tasks'}
+            </button>
+          </div>
+        )}
       </main>
     </div>
   );

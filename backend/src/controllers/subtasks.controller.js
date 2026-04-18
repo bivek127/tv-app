@@ -1,10 +1,13 @@
 const subtasksService = require('../services/subtasks.service');
-const tasksService = require('../services/tasks.service');
+const pool = require('../db');
 
-// Verify task belongs to the requesting user before any subtask operation
+// Verify task belongs to the requesting user — direct lookup, no full table scan
 async function verifyTaskOwnership(taskId, userId) {
-    const tasks = await tasksService.getAllTasks(userId);
-    return tasks.some((t) => t.id === taskId);
+    const result = await pool.query(
+        'SELECT 1 FROM tasks WHERE id = $1 AND user_id = $2',
+        [taskId, userId]
+    );
+    return result.rows.length > 0;
 }
 
 async function getSubtasks(req, res, next) {

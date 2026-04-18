@@ -18,6 +18,15 @@ function TaskItem({ task, onRefresh }) {
                             <span className={`badge priority-badge priority-${task.priority}`}>{PRIORITY_LABELS[task.priority]}</span>
                             <span className={`badge status-badge status-${task.status}`}>{STATUS_LABELS[task.status]}</span>
                             {task.due_date && <span className="badge due-date">Due: {task.due_date.slice(0, 10)}</span>}
+                            {task.labels && task.labels.length > 0 && task.labels.slice(0, 2).map((l) => (
+                                <span key={l.id} className="badge label-chip">
+                                    <span className="label-dot" style={{ background: l.color }} />
+                                    {l.name}
+                                </span>
+                            ))}
+                            {task.labels && task.labels.length > 2 && (
+                                <span className="badge label-more">+{task.labels.length - 2}</span>
+                            )}
                         </div>
                     </div>
                     <div className="task-actions">

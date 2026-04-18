@@ -1,6 +1,6 @@
 const usersService = require('./users.service');
 const refreshTokensService = require('./refreshTokens.service');
-const bcrypt = require('bcrypt');
+const bcrypt = require('bcryptjs');
 const { generateAccessToken, generateRefreshToken, hashToken } = require('../utils/token');
 
 const SALT_ROUNDS = 10;

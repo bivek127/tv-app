@@ -79,11 +79,14 @@ function TaskCard({ task, onRefresh }) {
                 )}
                 {task.labels && task.labels.length > 0 && (
                     <div className="kanban-card-labels">
-                        {task.labels.slice(0, 3).map((l) => (
-                            <span key={l.id} className="kanban-label-chip" style={{ background: l.color }}>{l.name}</span>
+                        {task.labels.slice(0, 2).map((l) => (
+                            <span key={l.id} className="kanban-label-chip">
+                                <span className="kanban-label-dot" style={{ background: l.color }} />
+                                {l.name}
+                            </span>
                         ))}
-                        {task.labels.length > 3 && (
-                            <span className="kanban-label-more">+{task.labels.length - 3}</span>
+                        {task.labels.length > 2 && (
+                            <span className="kanban-label-more">+{task.labels.length - 2}</span>
                         )}
                     </div>
                 )}
