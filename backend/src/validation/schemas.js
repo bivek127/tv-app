@@ -32,6 +32,7 @@ const createTaskSchema = z.object({
     priority:    z.enum(PRIORITIES).default('medium'),
     status:      z.enum(STATUSES).default('todo'),
     due_date:    z.string().date('Invalid date format').nullable().optional(),
+    projectId:   z.string().uuid('Invalid project ID').optional(),
 });
 
 const updateTaskSchema = z.object({
