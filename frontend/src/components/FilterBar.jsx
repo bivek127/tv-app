@@ -1,12 +1,14 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, forwardRef } from 'react';
 import { getToken } from '../lib/apiClient';
 import { getLabels } from '../api/labels';
+import { useToast } from '../context/ToastContext';
 import './FilterBar.css';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-function FilterBar({ search, onSearchChange, priority, onPriorityChange, status, onStatusChange, sort, onSortChange, labelFilter, onLabelFilterChange, blockedOnly, onBlockedFilterChange, onClear, taskCount, projectId }) {
+const FilterBar = forwardRef(function FilterBar({ search, onSearchChange, priority, onPriorityChange, status, onStatusChange, sort, onSortChange, labelFilter, onLabelFilterChange, blockedOnly, onBlockedFilterChange, onClear, taskCount, projectId }, ref) {
     const [labels, setLabels] = useState([]);
+    const { showToast } = useToast();
 
     useEffect(() => {
         getLabels().then(setLabels).catch(() => {});
@@ -39,7 +41,7 @@ function FilterBar({ search, onSearchChange, priority, onPriorityChange, status,
             a.remove();
             URL.revokeObjectURL(objectUrl);
         } catch (err) {
-            alert(err.message || 'Could not export tasks');
+            showToast(err.message || 'Could not export tasks', 'error');
         } finally {
             setExporting(false);
         }
@@ -48,6 +50,7 @@ function FilterBar({ search, onSearchChange, priority, onPriorityChange, status,
     return (
         <div className="filter-bar">
             <input
+                ref={ref}
                 type="text"
                 placeholder="Search tasks..."
                 value={search}
@@ -99,6 +102,6 @@ function FilterBar({ search, onSearchChange, priority, onPriorityChange, status,
             </button>
         </div>
     );
-}
+});
 
 export default FilterBar;

@@ -1,6 +1,7 @@
 import { useState, useEffect, useRef } from 'react';
 import { useProject } from '../context/ProjectContext';
 import { createProject, updateProject, deleteProject } from '../api/projects';
+import { useToast } from '../context/ToastContext';
 import './ProjectsSidebar.css';
 
 const PRESET_COLORS = [
@@ -131,10 +132,10 @@ function ProjectRow({ project, isActive, onSelect, onStartEdit, onDelete }) {
 
 function ProjectsSidebar() {
     const { projects, activeProject, setActiveProject, refetchProjects } = useProject();
+    const { showToast } = useToast();
     const [mode, setMode] = useState('list'); // list | create | edit
     const [editing, setEditing] = useState(null);
     const [saving, setSaving] = useState(false);
-    const [deleteError, setDeleteError] = useState('');
 
     const handleCreate = async (data) => {
         setSaving(true);
@@ -143,6 +144,7 @@ function ProjectsSidebar() {
             await refetchProjects();
             setActiveProject(created);
             setMode('list');
+            showToast(`Project "${created.name}" created`, 'success');
         } finally {
             setSaving(false);
         }
@@ -156,15 +158,15 @@ function ProjectsSidebar() {
             await refetchProjects();
             setMode('list');
             setEditing(null);
+            showToast('Project updated', 'success');
         } finally {
             setSaving(false);
         }
     };
 
     const handleDelete = async (project) => {
-        setDeleteError('');
         if (project.is_default) {
-            setDeleteError('The default project cannot be deleted.');
+            showToast('The default project cannot be deleted.', 'warning');
             return;
         }
         if (!window.confirm(`Delete project "${project.name}"? All tasks inside it will be deleted too.`)) return;
@@ -175,8 +177,9 @@ function ProjectsSidebar() {
                 setActiveProject(fallback);
             }
             await refetchProjects();
+            showToast(`Project "${project.name}" deleted`, 'success');
         } catch (err) {
-            setDeleteError(err.message || 'Could not delete project');
+            showToast(err.message || 'Could not delete project', 'error');
         }
     };
 
@@ -209,8 +212,6 @@ function ProjectsSidebar() {
                     saving={saving}
                 />
             )}
-
-            {deleteError && <p className="sidebar-error">{deleteError}</p>}
 
             <div className="project-list">
                 {projects.map((p) => (

@@ -137,6 +137,13 @@
   margin-top: 0.15rem;
 }
 
+/* ── Chart wrapper ────────────────────────────────────────────────── */
+.chart-wrapper {
+  position: relative;
+  height: 200px;
+  width: 100%;
+}
+
 /* ── Loading ──────────────────────────────────────────────────────── */
 .analytics-loading {
   text-align: center;

@@ -1,10 +1,11 @@
-import { useState, useEffect, useCallback } from 'react';
+import { useState, useEffect, useCallback, useRef } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { useTheme } from './context/ThemeContext';
 import { useProject } from './context/ProjectContext';
 import { getTasks } from './api/tasks';
 import { useSSE } from './hooks/useSSE';
+import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
 import KanbanBoard from './components/KanbanBoard';
@@ -15,6 +16,10 @@ import AnalyticsPanel from './components/AnalyticsPanel';
 import ActivityFeed from './components/ActivityFeed';
 import ProjectsSidebar from './components/ProjectsSidebar';
 import ProtectedRoute from './components/ProtectedRoute';
+import ErrorBoundary from './components/ErrorBoundary';
+import CommandPalette from './components/CommandPalette';
+import KeyboardShortcutsModal from './components/KeyboardShortcutsModal';
+import TaskModal from './components/TaskModal';
 import Login from './pages/Login';
 import Register from './pages/Register';
 import ForgotPassword from './pages/ForgotPassword';
@@ -35,6 +40,11 @@ function Dashboard() {
   const [sort, setSort] = useState('');
   const [labelFilter, setLabelFilter] = useState('');
   const [blockedOnly, setBlockedOnly] = useState(false);
+  const [paletteOpen, setPaletteOpen] = useState(false);
+  const [shortcutsHelpOpen, setShortcutsHelpOpen] = useState(false);
+  const [paletteTask, setPaletteTask] = useState(null);
+  const titleInputRef = useRef(null);
+  const searchInputRef = useRef(null);
   const { logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
   const { activeProject } = useProject();
@@ -89,6 +99,32 @@ function Dashboard() {
   }, [projectId]);
 
   const { isConnected } = useSSE(handleSSE);
+
+  // Cmd/Ctrl+K opens the command palette. Keep this in its own listener so
+  // it fires even while the user is typing inside an input.
+  useEffect(() => {
+    const onKey = (e) => {
+      if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === 'k') {
+        e.preventDefault();
+        setPaletteOpen((p) => !p);
+      }
+    };
+    window.addEventListener('keydown', onKey);
+    return () => window.removeEventListener('keydown', onKey);
+  }, []);
+
+  useKeyboardShortcuts({
+    onNewTask:     () => titleInputRef.current?.focus(),
+    onFocusSearch: () => searchInputRef.current?.focus(),
+    onBoardView:   () => setView('board'),
+    onListView:    () => setView('list'),
+    onHelp:        () => setShortcutsHelpOpen(true),
+    onEscape:      () => {
+      if (paletteOpen) setPaletteOpen(false);
+      else if (shortcutsHelpOpen) setShortcutsHelpOpen(false);
+      else if (paletteTask) setPaletteTask(null);
+    },
+  });
 
   const PRIORITY_ORDER = { urgent: 0, high: 1, medium: 2, low: 3 };
   const STATUS_ORDER = { todo: 0, in_progress: 1, done: 2 };
@@ -150,10 +186,15 @@ function Dashboard() {
             {error && <p className="error banner">{error}</p>}
             <StatsBar tasks={tasks} />
             <DueDateBanner tasks={tasks} onRefresh={refreshTasks} />
-            <TaskForm onCreated={refreshTasks} projectId={projectId} />
-            <AnalyticsPanel projectId={projectId} />
-            <ActivityFeed />
+            <TaskForm ref={titleInputRef} onCreated={refreshTasks} projectId={projectId} />
+            <ErrorBoundary title="Analytics failed to load">
+              <AnalyticsPanel projectId={projectId} tasks={tasks} />
+            </ErrorBoundary>
+            <ErrorBoundary title="Activity feed failed to load">
+              <ActivityFeed />
+            </ErrorBoundary>
             <FilterBar
+              ref={searchInputRef}
               search={search}
               onSearchChange={setSearch}
               priority={filterPriority}
@@ -184,11 +225,13 @@ function Dashboard() {
                   </div>
                 </div>
               </div>
-              {view === 'board' ? (
-                <KanbanBoard tasks={filteredTasks} onRefresh={refreshTasks} allTasks={tasks} />
-              ) : (
-                <TaskList tasks={filteredTasks} onRefresh={refreshTasks} allTasks={tasks} />
-              )}
+              <ErrorBoundary title="Task view failed to load">
+                {view === 'board' ? (
+                  <KanbanBoard tasks={filteredTasks} onRefresh={refreshTasks} allTasks={tasks} />
+                ) : (
+                  <TaskList tasks={filteredTasks} onRefresh={refreshTasks} allTasks={tasks} />
+                )}
+              </ErrorBoundary>
             </section>
             {nextCursor && (
               <div className="load-more-wrapper">
@@ -200,6 +243,25 @@ function Dashboard() {
           </main>
         </div>
       </div>
+      <CommandPalette
+        open={paletteOpen}
+        onClose={() => setPaletteOpen(false)}
+        tasks={tasks}
+        onOpenTask={setPaletteTask}
+        onFocusNewTask={() => titleInputRef.current?.focus()}
+        onSetView={setView}
+      />
+      {shortcutsHelpOpen && (
+        <KeyboardShortcutsModal onClose={() => setShortcutsHelpOpen(false)} />
+      )}
+      {paletteTask && (
+        <TaskModal
+          task={paletteTask}
+          onClose={() => setPaletteTask(null)}
+          onRefresh={refreshTasks}
+          allTasks={tasks}
+        />
+      )}
     </div>
   );
 }

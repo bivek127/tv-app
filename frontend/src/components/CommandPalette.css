@@ -1,0 +1,134 @@
+.palette-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: flex-start;
+    justify-content: center;
+    padding-top: 12vh;
+    z-index: 9000;
+    animation: palette-fade 0.15s ease-out;
+}
+
+@keyframes palette-fade {
+    from { opacity: 0; }
+    to   { opacity: 1; }
+}
+
+.palette {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: 0 20px 48px rgba(0, 0, 0, 0.35);
+    width: 100%;
+    max-width: 560px;
+    max-height: 70vh;
+    display: flex;
+    flex-direction: column;
+    overflow: hidden;
+}
+
+.palette-input {
+    appearance: none;
+    width: 100%;
+    border: none;
+    border-bottom: 1px solid var(--border);
+    background: transparent;
+    color: var(--text-primary);
+    padding: 0.9rem 1.1rem;
+    font-size: 1rem;
+    outline: none;
+}
+
+.palette-input::placeholder {
+    color: var(--text-secondary);
+}
+
+.palette-results {
+    overflow-y: auto;
+    flex: 1;
+    padding: 0.25rem 0;
+}
+
+.palette-category {
+    font-size: 0.7rem;
+    text-transform: uppercase;
+    letter-spacing: 0.06em;
+    color: var(--text-secondary);
+    padding: 0.5rem 1rem 0.25rem;
+    font-weight: 600;
+}
+
+.palette-row {
+    display: flex;
+    align-items: center;
+    gap: 0.6rem;
+    width: 100%;
+    background: transparent;
+    border: none;
+    color: var(--text-primary);
+    text-align: left;
+    padding: 0.55rem 1rem;
+    font-size: 0.9rem;
+    cursor: pointer;
+}
+
+.palette-row.selected {
+    background: var(--surface);
+}
+
+.palette-icon {
+    font-size: 1rem;
+    width: 1.25rem;
+    text-align: center;
+    flex-shrink: 0;
+}
+
+.palette-label {
+    flex: 1;
+    overflow: hidden;
+    text-overflow: ellipsis;
+    white-space: nowrap;
+}
+
+.palette-label mark {
+    background: transparent;
+    color: var(--primary-blue);
+    font-weight: 600;
+    padding: 0;
+}
+
+.palette-hint {
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+    flex-shrink: 0;
+}
+
+.palette-empty {
+    padding: 1.25rem 1rem;
+    color: var(--text-secondary);
+    font-size: 0.9rem;
+    text-align: center;
+}
+
+.palette-footer {
+    display: flex;
+    gap: 1rem;
+    padding: 0.55rem 1rem;
+    border-top: 1px solid var(--border);
+    font-size: 0.75rem;
+    color: var(--text-secondary);
+}
+
+.palette-footer kbd {
+    display: inline-block;
+    font-family: ui-monospace, 'SF Mono', Menlo, Consolas, monospace;
+    font-size: 0.7rem;
+    padding: 1px 5px;
+    border: 1px solid var(--border);
+    border-bottom-width: 2px;
+    border-radius: 4px;
+    background: var(--surface);
+    color: var(--text-primary);
+    margin-right: 4px;
+}
