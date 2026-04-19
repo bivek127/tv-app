@@ -2,6 +2,7 @@ import { useState, useEffect, useCallback } from 'react';
 import { Routes, Route, Navigate, useNavigate } from 'react-router-dom';
 import { useAuth } from './context/AuthContext';
 import { useTheme } from './context/ThemeContext';
+import { useProject } from './context/ProjectContext';
 import { getTasks } from './api/tasks';
 import { useSSE } from './hooks/useSSE';
 import TaskList from './components/TaskList';
@@ -12,6 +13,7 @@ import DueDateBanner from './components/DueDateBanner';
 import FilterBar from './components/FilterBar';
 import AnalyticsPanel from './components/AnalyticsPanel';
 import ActivityFeed from './components/ActivityFeed';
+import ProjectsSidebar from './components/ProjectsSidebar';
 import ProtectedRoute from './components/ProtectedRoute';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -35,24 +37,28 @@ function Dashboard() {
   const [blockedOnly, setBlockedOnly] = useState(false);
   const { logout } = useAuth();
   const { theme, toggleTheme } = useTheme();
+  const { activeProject } = useProject();
   const navigate = useNavigate();
 
-  const refreshTasks = async () => {
+  const projectId = activeProject?.id || null;
+
+  const refreshTasks = useCallback(async () => {
+    if (!projectId) return;
     try {
-      const data = await getTasks();
+      const data = await getTasks({ projectId });
       setTasks(data.tasks);
       setNextCursor(data.nextCursor);
       setError('');
     } catch (err) {
       setError(err.message || 'Could not load tasks.');
     }
-  };
+  }, [projectId]);
 
   const loadMore = async () => {
-    if (!nextCursor || loadingMore) return;
+    if (!nextCursor || loadingMore || !projectId) return;
     setLoadingMore(true);
     try {
-      const data = await getTasks({ cursor: nextCursor });
+      const data = await getTasks({ projectId, cursor: nextCursor });
       setTasks((prev) => [...prev, ...data.tasks]);
       setNextCursor(data.nextCursor);
     } catch (err) {
@@ -62,17 +68,25 @@ function Dashboard() {
     }
   };
 
-  useEffect(() => { refreshTasks(); }, []);
+  // Reset + refetch whenever the active project changes.
+  useEffect(() => {
+    setTasks([]);
+    setNextCursor(null);
+    refreshTasks();
+  }, [projectId, refreshTasks]);
 
   const handleSSE = useCallback((event) => {
     if (event.type === 'task_created') {
+      // Only show tasks for the currently active project.
+      if (event.payload.project_id && event.payload.project_id !== projectId) return;
       setTasks((prev) => prev.some((t) => t.id === event.payload.id) ? prev : [event.payload, ...prev]);
     } else if (event.type === 'task_updated') {
+      if (event.payload.project_id && event.payload.project_id !== projectId) return;
       setTasks((prev) => prev.map((t) => t.id === event.payload.id ? { ...t, ...event.payload } : t));
     } else if (event.type === 'task_deleted') {
       setTasks((prev) => prev.filter((t) => t.id !== event.payload.id));
     }
-  }, []);
+  }, [projectId]);
 
   const { isConnected } = useSSE(handleSSE);
 
@@ -110,68 +124,82 @@ function Dashboard() {
   };
 
   return (
-    <div className="app">
-      <header className="app-header">
-        <h1>TaskVault</h1>
-        <nav style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
-          <button onClick={toggleTheme} className="btn-theme" title="Toggle theme" aria-label="Toggle theme">
-            {theme === 'dark' ? '☀️' : '🌙'}
-          </button>
-          <button onClick={() => navigate('/profile')} className="btn-secondary" style={{ fontSize: '0.85rem' }}>Profile</button>
-          <button onClick={handleLogout} className="btn-logout">Sign out</button>
-        </nav>
-      </header>
-      <main className="app-main">
-        {error && <p className="error banner">{error}</p>}
-        <StatsBar tasks={tasks} />
-        <DueDateBanner tasks={tasks} onRefresh={refreshTasks} />
-        <TaskForm onCreated={refreshTasks} />
-        <AnalyticsPanel />
-        <ActivityFeed />
-        <FilterBar
-          search={search}
-          onSearchChange={setSearch}
-          priority={filterPriority}
-          onPriorityChange={setFilterPriority}
-          status={filterStatus}
-          onStatusChange={setFilterStatus}
-          sort={sort}
-          onSortChange={setSort}
-          labelFilter={labelFilter}
-          onLabelFilterChange={setLabelFilter}
-          blockedOnly={blockedOnly}
-          onBlockedFilterChange={setBlockedOnly}
-          onClear={clearFilters}
-          taskCount={filteredTasks.length}
-        />
-        <section className="task-section">
-          <div className="task-section-header">
-            <h2>Tasks ({filteredTasks.length})</h2>
-            <div className="task-section-right">
-              <span className={`live-indicator ${isConnected ? 'on' : 'off'}`} title={isConnected ? 'Real-time updates active' : 'Reconnecting…'}>
-                <span className="live-dot" />
-                {isConnected ? 'Live' : 'Reconnecting…'}
-              </span>
-              <div className="view-toggle">
-                <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>Board</button>
-                <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>List</button>
+    <div className="app-layout">
+      <ProjectsSidebar />
+      <div className="app-main-wrapper">
+        <div className="app">
+          <header className="app-header">
+            <h1 className="active-project-title">
+              {activeProject && (
+                <>
+                  <span className="active-project-icon">{activeProject.icon || '📋'}</span>
+                  <span>{activeProject.name}</span>
+                </>
+              )}
+              {!activeProject && <span>TaskVault</span>}
+            </h1>
+            <nav style={{ display: 'flex', gap: '0.75rem', alignItems: 'center' }}>
+              <button onClick={toggleTheme} className="btn-theme" title="Toggle theme" aria-label="Toggle theme">
+                {theme === 'dark' ? '☀️' : '🌙'}
+              </button>
+              <button onClick={() => navigate('/profile')} className="btn-secondary" style={{ fontSize: '0.85rem' }}>Profile</button>
+              <button onClick={handleLogout} className="btn-logout">Sign out</button>
+            </nav>
+          </header>
+          <main className="app-main">
+            {error && <p className="error banner">{error}</p>}
+            <StatsBar tasks={tasks} />
+            <DueDateBanner tasks={tasks} onRefresh={refreshTasks} />
+            <TaskForm onCreated={refreshTasks} projectId={projectId} />
+            <AnalyticsPanel projectId={projectId} />
+            <ActivityFeed />
+            <FilterBar
+              search={search}
+              onSearchChange={setSearch}
+              priority={filterPriority}
+              onPriorityChange={setFilterPriority}
+              status={filterStatus}
+              onStatusChange={setFilterStatus}
+              sort={sort}
+              onSortChange={setSort}
+              labelFilter={labelFilter}
+              onLabelFilterChange={setLabelFilter}
+              blockedOnly={blockedOnly}
+              onBlockedFilterChange={setBlockedOnly}
+              onClear={clearFilters}
+              taskCount={filteredTasks.length}
+              projectId={projectId}
+            />
+            <section className="task-section">
+              <div className="task-section-header">
+                <h2>Tasks ({filteredTasks.length})</h2>
+                <div className="task-section-right">
+                  <span className={`live-indicator ${isConnected ? 'on' : 'off'}`} title={isConnected ? 'Real-time updates active' : 'Reconnecting…'}>
+                    <span className="live-dot" />
+                    {isConnected ? 'Live' : 'Reconnecting…'}
+                  </span>
+                  <div className="view-toggle">
+                    <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>Board</button>
+                    <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>List</button>
+                  </div>
+                </div>
               </div>
-            </div>
-          </div>
-          {view === 'board' ? (
-            <KanbanBoard tasks={filteredTasks} onRefresh={refreshTasks} allTasks={tasks} />
-          ) : (
-            <TaskList tasks={filteredTasks} onRefresh={refreshTasks} allTasks={tasks} />
-          )}
-        </section>
-        {nextCursor && (
-          <div className="load-more-wrapper">
-            <button className="btn-load-more" onClick={loadMore} disabled={loadingMore}>
-              {loadingMore ? 'Loading...' : 'Load more tasks'}
-            </button>
-          </div>
-        )}
-      </main>
+              {view === 'board' ? (
+                <KanbanBoard tasks={filteredTasks} onRefresh={refreshTasks} allTasks={tasks} />
+              ) : (
+                <TaskList tasks={filteredTasks} onRefresh={refreshTasks} allTasks={tasks} />
+              )}
+            </section>
+            {nextCursor && (
+              <div className="load-more-wrapper">
+                <button className="btn-load-more" onClick={loadMore} disabled={loadingMore}>
+                  {loadingMore ? 'Loading...' : 'Load more tasks'}
+                </button>
+              </div>
+            )}
+          </main>
+        </div>
+      </div>
     </div>
   );
 }

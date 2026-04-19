@@ -1,7 +1,7 @@
 import { useState } from 'react';
 import { createTask } from '../api/tasks';
 
-function TaskForm({ onCreated }) {
+function TaskForm({ onCreated, projectId }) {
     const [title, setTitle]           = useState('');
     const [description, setDescription] = useState('');
     const [priority, setPriority]     = useState('medium');
@@ -22,6 +22,7 @@ function TaskForm({ onCreated }) {
                 priority,
                 status,
                 due_date: dueDate || null,
+                projectId: projectId || undefined,
             });
             setTitle('');
             setDescription('');

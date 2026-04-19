@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import apiClient from '../lib/apiClient';
 import './AnalyticsPanel.css';
 
@@ -25,24 +25,29 @@ function BarChart({ data, labelMap, classPrefix }) {
     );
 }
 
-function AnalyticsPanel() {
+function AnalyticsPanel({ projectId }) {
     const [open, setOpen]       = useState(false);
     const [stats, setStats]     = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError]     = useState('');
-    const [fetched, setFetched] = useState(false);
+
+    // Reset cached stats when the active project changes — re-fetch on next open.
+    useEffect(() => {
+        setStats(null);
+        setError('');
+    }, [projectId]);
 
     const handleToggle = async () => {
         const willOpen = !open;
         setOpen(willOpen);
 
-        // Lazy fetch on first expand
-        if (willOpen && !fetched) {
+        // Lazy fetch on first expand (or after project change clears stats).
+        if (willOpen && !stats) {
             setLoading(true);
             try {
-                const data = await apiClient('/tasks/stats');
+                const qs = projectId ? `?projectId=${projectId}` : '';
+                const data = await apiClient(`/tasks/stats${qs}`);
                 setStats(data);
-                setFetched(true);
             } catch (err) {
                 setError(err.message);
             } finally {

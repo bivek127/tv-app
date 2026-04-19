@@ -5,7 +5,7 @@ import './FilterBar.css';
 
 const BASE_URL = import.meta.env.VITE_API_URL || 'http://localhost:3001';
 
-function FilterBar({ search, onSearchChange, priority, onPriorityChange, status, onStatusChange, sort, onSortChange, labelFilter, onLabelFilterChange, blockedOnly, onBlockedFilterChange, onClear, taskCount }) {
+function FilterBar({ search, onSearchChange, priority, onPriorityChange, status, onStatusChange, sort, onSortChange, labelFilter, onLabelFilterChange, blockedOnly, onBlockedFilterChange, onClear, taskCount, projectId }) {
     const [labels, setLabels] = useState([]);
 
     useEffect(() => {
@@ -16,9 +16,11 @@ function FilterBar({ search, onSearchChange, priority, onPriorityChange, status,
     const handleExport = async () => {
         setExporting(true);
         try {
-            const url = search
-                ? `${BASE_URL}/tasks/export?search=${encodeURIComponent(search)}`
-                : `${BASE_URL}/tasks/export`;
+            const params = new URLSearchParams();
+            if (search)    params.set('search', search);
+            if (projectId) params.set('projectId', projectId);
+            const qs = params.toString();
+            const url = `${BASE_URL}/tasks/export${qs ? `?${qs}` : ''}`;
 
             const res = await fetch(url, {
                 headers: { Authorization: `Bearer ${getToken()}` },
