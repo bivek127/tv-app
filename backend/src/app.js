@@ -7,6 +7,7 @@ const tasksRouter = require('./routes/tasks.routes');
 const activityRouter = require('./routes/activity.routes');
 const profileRouter = require('./routes/profile.routes');
 const labelsRouter = require('./routes/labels.routes');
+const projectsRouter = require('./routes/projects.routes');
 const sseRouter = require('./routes/sse.routes');
 const { authenticate } = require('./middleware/auth.middleware');
 const errorMiddleware = require('./middleware/error.middleware');
@@ -45,6 +46,7 @@ app.use('/auth', authRouter);
 app.use('/tasks', authenticate, tasksRouter);
 app.use('/activity', authenticate, activityRouter);
 app.use('/profile', authenticate, profileRouter);
+app.use('/projects', authenticate, projectsRouter);
 app.use('/', authenticate, labelsRouter);
 app.use('/', sseRouter); // SSE router does its own auth (supports query-param token)
 

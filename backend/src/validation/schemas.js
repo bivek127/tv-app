@@ -56,6 +56,28 @@ const updateSubtaskSchema = z.object({
     message: 'At least one field (title, completed, or position) is required',
 });
 
+// ── Projects ──────────────────────────────────────────────────────
+
+const HEX_COLOR = /^#[0-9a-fA-F]{6}$/;
+
+const createProjectSchema = z.object({
+    name:        z.string().min(1, 'Name is required').max(100, 'Name too long'),
+    description: z.string().max(500, 'Description too long').nullable().optional(),
+    color:       z.string().regex(HEX_COLOR, 'Color must be a hex code like #6366f1').optional(),
+    icon:        z.string().max(10, 'Icon too long').nullable().optional(),
+});
+
+const updateProjectSchema = z.object({
+    name:        z.string().min(1, 'Name is required').max(100, 'Name too long').optional(),
+    description: z.string().max(500, 'Description too long').nullable().optional(),
+    color:       z.string().regex(HEX_COLOR, 'Color must be a hex code like #6366f1').optional(),
+    icon:        z.string().max(10, 'Icon too long').nullable().optional(),
+    position:    z.number().int().min(0).optional(),
+}).refine(
+    (d) => Object.values(d).some((v) => v !== undefined),
+    { message: 'At least one field is required' }
+);
+
 // ── Profile ───────────────────────────────────────────────────────
 
 const updateProfileSchema = z.object({
@@ -115,6 +137,8 @@ module.exports = {
     updateTaskSchema,
     createSubtaskSchema,
     updateSubtaskSchema,
+    createProjectSchema,
+    updateProjectSchema,
     updateProfileSchema,
     updatePasswordSchema,
     uuidParamSchema,
