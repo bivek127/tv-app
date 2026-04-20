@@ -4,6 +4,7 @@ import { getLabelsForTask } from '../api/labels';
 import Checklist from './Checklist';
 import LabelManager from './LabelManager';
 import DependencyManager from './DependencyManager';
+import { useToast } from '../context/ToastContext';
 import './TaskModal.css';
 
 const PRIORITY_COLORS = {
@@ -20,9 +21,9 @@ function TaskModal({ task, onClose, onRefresh, allTasks = [] }) {
     const [status, setStatus] = useState(task.status || 'todo');
     const [dueDate, setDueDate] = useState(task.due_date ? task.due_date.slice(0, 10) : '');
     const [loading, setLoading] = useState(false);
-    const [error, setError] = useState('');
     const [dirty, setDirty] = useState(false);
     const [taskLabels, setTaskLabels] = useState(task.labels || []);
+    const { showToast } = useToast();
 
     const refreshLabels = () => {
         getLabelsForTask(task.id).then(setTaskLabels).catch(() => {});
@@ -40,8 +41,7 @@ function TaskModal({ task, onClose, onRefresh, allTasks = [] }) {
     const markDirty = (setter) => (val) => { setter(val); setDirty(true); };
 
     const handleSave = async () => {
-        if (!title.trim()) { setError('Title is required'); return; }
-        setError('');
+        if (!title.trim()) { showToast('Title is required', 'warning'); return; }
         setLoading(true);
         try {
             await updateTask(task.id, {
@@ -52,9 +52,10 @@ function TaskModal({ task, onClose, onRefresh, allTasks = [] }) {
                 due_date: dueDate || null,
             });
             setDirty(false);
+            showToast('Task saved', 'success');
             onRefresh();
         } catch (err) {
-            setError(err.message);
+            showToast(err.message || 'Could not save task', 'error');
         } finally {
             setLoading(false);
         }
@@ -65,10 +66,11 @@ function TaskModal({ task, onClose, onRefresh, allTasks = [] }) {
         setLoading(true);
         try {
             await deleteTask(task.id);
+            showToast('Task deleted', 'success');
             onRefresh();
             onClose();
         } catch (err) {
-            setError(err.message);
+            showToast(err.message || 'Could not delete task', 'error');
             setLoading(false);
         }
     };
@@ -85,8 +87,6 @@ function TaskModal({ task, onClose, onRefresh, allTasks = [] }) {
                     />
                     <button className="modal-close" onClick={onClose} title="Close">×</button>
                 </div>
-
-                {error && <p className="error" style={{ padding: '0 1.5rem', fontSize: '0.8rem' }}>{error}</p>}
 
                 <div className="modal-body">
                     {/* Left column — task details */}

@@ -1,6 +1,14 @@
 const authService = require('../services/auth.service');
 const logger = require('../utils/logger');
 const { logActivity } = require('../services/activity.service');
+const { ensureDefaultProject } = require('../services/projects.service');
+
+// Fire-and-forget: never block auth response if default-project seeding fails.
+function seedDefaultProject(userId) {
+    ensureDefaultProject(userId).catch((err) => {
+        logger.warn(`ensureDefaultProject failed for ${userId}: ${err.message}`);
+    });
+}
 
 const REFRESH_COOKIE = 'refreshToken';
 const isProduction = process.env.NODE_ENV === 'production';
@@ -17,6 +25,7 @@ async function register(req, res, next) {
         const { user, accessToken, refreshToken } = await authService.register(email, password);
         res.cookie(REFRESH_COOKIE, refreshToken, COOKIE_OPTIONS);
         logger.info(`User registered: ${email}`);
+        seedDefaultProject(user.id);
         res.status(201).json({ success: true, data: { user, accessToken } });
     } catch (err) {
         next(err);
@@ -30,6 +39,7 @@ async function login(req, res, next) {
         res.cookie(REFRESH_COOKIE, refreshToken, COOKIE_OPTIONS);
         logger.info(`User logged in: ${email}`);
         logActivity({ userId: user.id, action: 'user_login' });
+        seedDefaultProject(user.id);
         res.json({ success: true, data: { user, accessToken } });
     } catch (err) {
         next(err);

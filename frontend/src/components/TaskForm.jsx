@@ -1,19 +1,19 @@
-import { useState } from 'react';
+import { useState, forwardRef } from 'react';
 import { createTask } from '../api/tasks';
+import { useToast } from '../context/ToastContext';
 
-function TaskForm({ onCreated }) {
+const TaskForm = forwardRef(function TaskForm({ onCreated, projectId }, ref) {
     const [title, setTitle]           = useState('');
     const [description, setDescription] = useState('');
     const [priority, setPriority]     = useState('medium');
     const [status, setStatus]         = useState('todo');
     const [dueDate, setDueDate]       = useState('');
-    const [error, setError]           = useState('');
     const [loading, setLoading]       = useState(false);
+    const { showToast } = useToast();
 
     const handleSubmit = async (e) => {
         e.preventDefault();
-        if (!title.trim()) { setError('Title is required'); return; }
-        setError('');
+        if (!title.trim()) { showToast('Title is required', 'warning'); return; }
         setLoading(true);
         try {
             await createTask({
@@ -22,15 +22,17 @@ function TaskForm({ onCreated }) {
                 priority,
                 status,
                 due_date: dueDate || null,
+                projectId: projectId || undefined,
             });
             setTitle('');
             setDescription('');
             setPriority('medium');
             setStatus('todo');
             setDueDate('');
+            showToast('Task created', 'success');
             onCreated();
         } catch (err) {
-            setError(err.message);
+            showToast(err.message || 'Could not create task', 'error');
         } finally {
             setLoading(false);
         }
@@ -39,8 +41,8 @@ function TaskForm({ onCreated }) {
     return (
         <form className="task-form" onSubmit={handleSubmit}>
             <h2>New Task</h2>
-            {error && <p className="error">{error}</p>}
             <input
+                ref={ref}
                 type="text"
                 placeholder="Title *"
                 value={title}
@@ -75,6 +77,6 @@ function TaskForm({ onCreated }) {
             </button>
         </form>
     );
-}
+});
 
 export default TaskForm;

@@ -2,23 +2,21 @@ import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { getProfile, updateProfile, updatePassword } from '../api/profile';
 import { useAuth } from '../context/AuthContext';
+import { useToast } from '../context/ToastContext';
 import './Profile.css';
 
 function Profile() {
     const { logout } = useAuth();
     const navigate = useNavigate();
+    const { showToast } = useToast();
 
     const [user, setUser] = useState(null);
     const [name, setName] = useState('');
-    const [nameSuccess, setNameSuccess] = useState('');
-    const [nameError, setNameError] = useState('');
     const [nameSaving, setNameSaving] = useState(false);
 
     const [currentPassword, setCurrentPassword] = useState('');
     const [newPassword, setNewPassword] = useState('');
     const [confirmPassword, setConfirmPassword] = useState('');
-    const [pwSuccess, setPwSuccess] = useState('');
-    const [pwError, setPwError] = useState('');
     const [pwSaving, setPwSaving] = useState(false);
 
     useEffect(() => {
@@ -30,14 +28,13 @@ function Profile() {
 
     const handleSaveName = async (e) => {
         e.preventDefault();
-        setNameError(''); setNameSuccess('');
         setNameSaving(true);
         try {
             const data = await updateProfile({ name: name.trim() || null });
             setUser(data.user);
-            setNameSuccess('Name updated!');
+            showToast('Name updated', 'success');
         } catch (err) {
-            setNameError(err.message);
+            showToast(err.message || 'Could not update name', 'error');
         } finally {
             setNameSaving(false);
         }
@@ -45,16 +42,15 @@ function Profile() {
 
     const handleChangePassword = async (e) => {
         e.preventDefault();
-        setPwError(''); setPwSuccess('');
-        if (newPassword !== confirmPassword) { setPwError('Passwords do not match'); return; }
-        if (newPassword.length < 8) { setPwError('New password must be at least 8 characters'); return; }
+        if (newPassword !== confirmPassword) { showToast('Passwords do not match', 'warning'); return; }
+        if (newPassword.length < 8) { showToast('New password must be at least 8 characters', 'warning'); return; }
         setPwSaving(true);
         try {
             await updatePassword({ currentPassword, newPassword });
-            setPwSuccess('Password updated!');
+            showToast('Password updated', 'success');
             setCurrentPassword(''); setNewPassword(''); setConfirmPassword('');
         } catch (err) {
-            setPwError(err.message);
+            showToast(err.message || 'Could not update password', 'error');
         } finally {
             setPwSaving(false);
         }
@@ -88,12 +84,10 @@ function Profile() {
                         <input
                             type="text"
                             value={name}
-                            onChange={(e) => { setName(e.target.value); setNameSuccess(''); }}
+                            onChange={(e) => setName(e.target.value)}
                             placeholder="Enter your name"
                             maxLength={80}
                         />
-                        {nameError && <p className="profile-error">{nameError}</p>}
-                        {nameSuccess && <p className="profile-success">{nameSuccess}</p>}
                         <button type="submit" disabled={nameSaving}>
                             {nameSaving ? 'Saving…' : 'Save name'}
                         </button>
@@ -125,8 +119,6 @@ function Profile() {
                                 onChange={(e) => setConfirmPassword(e.target.value)}
                                 autoComplete="new-password"
                             />
-                            {pwError && <p className="profile-error">{pwError}</p>}
-                            {pwSuccess && <p className="profile-success">{pwSuccess}</p>}
                             <button type="submit" disabled={pwSaving || !currentPassword || !newPassword || !confirmPassword}>
                                 {pwSaving ? 'Updating…' : 'Update password'}
                             </button>

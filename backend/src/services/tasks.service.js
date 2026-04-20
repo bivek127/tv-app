@@ -1,14 +1,14 @@
 const pool = require('../db');
 
 /**
- * Fetch tasks belonging to a specific user with optional cursor-based pagination.
+ * Fetch tasks scoped to a (user, project) with optional cursor-based pagination.
  * When limit is provided, returns { tasks, nextCursor }.
  * When limit is omitted (e.g. CSV export), returns a flat array of all tasks.
  */
-async function getAllTasks(userId, { search, cursor, limit } = {}) {
-    const conditions = ['t.user_id = $1'];
-    const params = [userId];
-    let idx = 2;
+async function getAllTasks(userId, { projectId, search, cursor, limit } = {}) {
+    const conditions = ['t.user_id = $1', 't.project_id = $2'];
+    const params = [userId, projectId];
+    let idx = 3;
 
     if (search) {
         conditions.push(`(t.title ILIKE $${idx} OR t.description ILIKE $${idx})`);
@@ -63,19 +63,23 @@ async function getAllTasks(userId, { search, cursor, limit } = {}) {
 }
 
 /**
- * Create a new task for a specific user.
+ * Create a new task inside the given project. Returns null if the project does
+ * not belong to the user (prevents cross-user task insertion).
  */
-async function createTask(userId, title, description, priority, status, due_date) {
+async function createTask(userId, { projectId, title, description, priority, status, due_date }) {
     const result = await pool.query(
-        `INSERT INTO tasks (title, description, user_id, priority, status, due_date)
-         VALUES ($1, $2, $3, $4, $5, $6) RETURNING *`,
-        [title, description ?? null, userId, priority, status, due_date ?? null]
+        `INSERT INTO tasks (title, description, user_id, priority, status, due_date, project_id)
+         SELECT $1, $2, $3, $4, $5, $6, $7
+         WHERE EXISTS (SELECT 1 FROM projects WHERE id = $7 AND user_id = $3)
+         RETURNING *`,
+        [title, description ?? null, userId, priority, status, due_date ?? null, projectId]
     );
-    return result.rows[0];
+    return result.rows[0] || null;
 }
 
 /**
- * Update a task — enforces ownership via user_id.
+ * Update a task — enforces ownership via user_id. Tasks do not move between
+ * projects in this version, so project_id is not modified here.
  */
 async function updateTask(taskId, userId, title, description, priority, status, due_date) {
     const result = await pool.query(
@@ -105,9 +109,9 @@ async function deleteTask(taskId, userId) {
 }
 
 /**
- * Aggregate stats for a user's tasks in a single query.
+ * Aggregate stats for a user's tasks in a single query, scoped to one project.
  */
-async function getTaskStats(userId) {
+async function getTaskStats(userId, projectId) {
     const result = await pool.query(
         `SELECT
             COUNT(*) FILTER (WHERE status = 'todo')        AS status_todo,
@@ -131,8 +135,8 @@ async function getTaskStats(userId) {
                 0
             ) AS avg_completion_days
          FROM tasks
-         WHERE user_id = $1`,
-        [userId]
+         WHERE user_id = $1 AND project_id = $2`,
+        [userId, projectId]
     );
     return result.rows[0];
 }

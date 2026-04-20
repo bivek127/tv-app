@@ -1,0 +1,25 @@
+.error-boundary {
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 8px;
+    padding: 1.5rem;
+    text-align: center;
+    color: var(--text-primary);
+}
+
+.error-boundary-icon {
+    font-size: 2rem;
+    margin-bottom: 0.5rem;
+}
+
+.error-boundary h3 {
+    font-size: 1rem;
+    margin: 0 0 0.35rem;
+    color: var(--text-primary);
+}
+
+.error-boundary p {
+    font-size: 0.875rem;
+    color: var(--text-secondary);
+    margin: 0 0 1rem;
+}

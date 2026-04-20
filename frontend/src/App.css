@@ -335,6 +335,40 @@ button:hover:not(:disabled) {
   margin-bottom: 0.75rem;
 }
 
+.task-section-right {
+  display: flex;
+  align-items: center;
+  gap: 0.75rem;
+}
+
+/* Live / reconnecting indicator */
+.live-indicator {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.35rem;
+  font-size: 0.75rem;
+  font-weight: 600;
+  color: var(--text-secondary, #5e6c84);
+}
+
+.live-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: #22c55e;
+  animation: live-pulse 2s infinite;
+}
+
+.live-indicator.off .live-dot {
+  background: #9ca3af;
+  animation: none;
+}
+
+@keyframes live-pulse {
+  0%, 100% { opacity: 1; }
+  50%       { opacity: 0.4; }
+}
+
 .task-section h2 {
   font-size: 1rem;
   font-weight: 600;

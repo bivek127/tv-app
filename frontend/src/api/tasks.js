@@ -1,10 +1,11 @@
 import apiClient from '../lib/apiClient';
 
-export function getTasks({ cursor, limit, search } = {}) {
+export function getTasks({ cursor, limit, search, projectId } = {}) {
     const params = new URLSearchParams();
-    if (cursor) params.set('cursor', cursor);
-    if (limit)  params.set('limit', String(limit));
-    if (search) params.set('search', search);
+    if (cursor)    params.set('cursor', cursor);
+    if (limit)     params.set('limit', String(limit));
+    if (search)    params.set('search', search);
+    if (projectId) params.set('projectId', projectId);
     const qs = params.toString();
     return apiClient(`/tasks${qs ? `?${qs}` : ''}`);
 }
