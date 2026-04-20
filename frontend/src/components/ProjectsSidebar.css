@@ -197,13 +197,73 @@
     opacity: 0.6;
 }
 
+/* ── Project modal ────────────────────────────────────────────────── */
+.project-modal-backdrop {
+    position: fixed;
+    inset: 0;
+    background: rgba(0, 0, 0, 0.5);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9000;
+    padding: 1rem;
+}
+
+.project-modal {
+    width: 100%;
+    max-width: 420px;
+    background: var(--card-bg);
+    border: 1px solid var(--border);
+    border-radius: 12px;
+    box-shadow: var(--card-shadow);
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+.project-modal-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    padding: 0.875rem 1rem;
+    border-bottom: 1px solid var(--border);
+}
+
+.project-modal-header h3 {
+    font-size: 1rem;
+    font-weight: 600;
+    color: var(--text-primary);
+    margin: 0;
+}
+
+.project-modal-close {
+    background: transparent;
+    border: none;
+    font-size: 1.5rem;
+    line-height: 1;
+    color: var(--text-secondary);
+    cursor: pointer;
+    padding: 0;
+    width: 28px;
+    height: 28px;
+    border-radius: 6px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.project-modal-close:hover {
+    background: var(--surface);
+    color: var(--text-primary);
+}
+
 /* ── Project form ─────────────────────────────────────────────────── */
 .project-form {
-    margin: 0 1rem;
-    padding: 0.75rem;
-    background: var(--surface);
-    border: 1px solid var(--border);
-    border-radius: 8px;
+    margin: 0;
+    padding: 1rem;
+    background: var(--card-bg);
+    border: none;
+    border-radius: 0;
     display: flex;
     flex-direction: column;
     gap: 0.5rem;

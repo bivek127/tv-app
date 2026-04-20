@@ -137,6 +137,17 @@ function ProjectsSidebar() {
     const [editing, setEditing] = useState(null);
     const [saving, setSaving] = useState(false);
 
+    const openCreate = () => { setEditing(null); setMode('create'); };
+    const closeForm  = () => { setMode('list'); setEditing(null); };
+
+    // Close the modal on Escape.
+    useEffect(() => {
+        if (mode === 'list') return;
+        const onKey = (e) => { if (e.key === 'Escape') closeForm(); };
+        window.addEventListener('keydown', onKey);
+        return () => window.removeEventListener('keydown', onKey);
+    }, [mode]);
+
     const handleCreate = async (data) => {
         setSaving(true);
         try {
@@ -183,58 +194,70 @@ function ProjectsSidebar() {
         }
     };
 
+    const modalOpen = mode === 'create' || (mode === 'edit' && editing);
+
     return (
-        <aside className="sidebar">
-            <div className="sidebar-header">
-                <h2 className="sidebar-title">Projects</h2>
+        <>
+            <aside className="sidebar">
+                <div className="sidebar-header">
+                    <h2 className="sidebar-title">Projects</h2>
+                    <button
+                        className="sidebar-add-btn"
+                        onClick={openCreate}
+                        aria-label="New project"
+                        title="New project"
+                        type="button"
+                    >+</button>
+                </div>
+
+                <div className="project-list">
+                    {projects.map((p) => (
+                        <ProjectRow
+                            key={p.id}
+                            project={p}
+                            isActive={activeProject?.id === p.id}
+                            onSelect={setActiveProject}
+                            onStartEdit={(proj) => { setEditing(proj); setMode('edit'); }}
+                            onDelete={handleDelete}
+                        />
+                    ))}
+                    {projects.length === 0 && (
+                        <p className="sidebar-empty">No projects yet.</p>
+                    )}
+                </div>
+
                 <button
-                    className="sidebar-add-btn"
-                    onClick={() => { setMode('create'); setEditing(null); }}
-                    aria-label="New project"
-                    title="New project"
+                    className="sidebar-new-btn"
+                    onClick={openCreate}
                     type="button"
-                >+</button>
-            </div>
+                >+ New project</button>
+            </aside>
 
-            {mode === 'create' && (
-                <ProjectForm
-                    onSave={handleCreate}
-                    onCancel={() => setMode('list')}
-                    saving={saving}
-                />
+            {modalOpen && (
+                <div
+                    className="project-modal-backdrop"
+                    onClick={(e) => { if (e.target === e.currentTarget) closeForm(); }}
+                >
+                    <div className="project-modal" role="dialog" aria-modal="true">
+                        <div className="project-modal-header">
+                            <h3>{mode === 'edit' ? 'Edit project' : 'New project'}</h3>
+                            <button
+                                type="button"
+                                className="project-modal-close"
+                                onClick={closeForm}
+                                aria-label="Close"
+                            >×</button>
+                        </div>
+                        <ProjectForm
+                            initial={mode === 'edit' ? editing : null}
+                            onSave={mode === 'edit' ? handleUpdate : handleCreate}
+                            onCancel={closeForm}
+                            saving={saving}
+                        />
+                    </div>
+                </div>
             )}
-
-            {mode === 'edit' && editing && (
-                <ProjectForm
-                    initial={editing}
-                    onSave={handleUpdate}
-                    onCancel={() => { setMode('list'); setEditing(null); }}
-                    saving={saving}
-                />
-            )}
-
-            <div className="project-list">
-                {projects.map((p) => (
-                    <ProjectRow
-                        key={p.id}
-                        project={p}
-                        isActive={activeProject?.id === p.id}
-                        onSelect={setActiveProject}
-                        onStartEdit={(proj) => { setEditing(proj); setMode('edit'); }}
-                        onDelete={handleDelete}
-                    />
-                ))}
-                {projects.length === 0 && (
-                    <p className="sidebar-empty">No projects yet.</p>
-                )}
-            </div>
-
-            <button
-                className="sidebar-new-btn"
-                onClick={() => { setMode('create'); setEditing(null); }}
-                type="button"
-            >+ New project</button>
-        </aside>
+        </>
     );
 }
 

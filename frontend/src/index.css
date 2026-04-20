@@ -1,3 +1,103 @@
+/* ── CSS Custom Properties ────────────────────────────────────────── */
+:root {
+  /* Surfaces */
+  --bg:              #f4f5f7;
+  --surface:         #ebecf0;
+  --card-bg:         #ffffff;
+  --card-shadow:     0 4px 16px rgba(0, 0, 0, 0.08);
+
+  /* Typography */
+  --text-primary:    #172b4d;
+  --text-secondary:  #5e6c84;
+  --text-muted:      #97a0af;
+
+  /* Borders & dividers */
+  --border:          #dfe1e6;
+
+  /* Brand */
+  --primary-blue:    #0052cc;
+  --primary-blue-dk: #0747a6;
+  --primary-glow:    transparent;
+
+  /* Priority badge fills */
+  --badge-urgent-bg: #ffd5d5; --badge-urgent-fg: #8b0000;
+  --badge-high-bg:   #fff0e6; --badge-high-fg:   #bf3600;
+  --badge-medium-bg: #fffae6; --badge-medium-fg: #7a5c00;
+  --badge-low-bg:    #e3fcef; --badge-low-fg:    #006644;
+
+  /* Status badge fills */
+  --status-todo-bg:     #f4f5f7; --status-todo-fg:     #5e6c84;
+  --status-progress-bg: #deebff; --status-progress-fg: #0747a6;
+  --status-done-bg:     #e3fcef; --status-done-fg:     #006644;
+
+  /* Kanban column headers */
+  --col-todo-bg:     #e4e6ea; --col-todo-fg:     #42526e;
+  --col-progress-bg: #deebff; --col-progress-fg: #0747a6;
+  --col-done-bg:     #e3fcef; --col-done-fg:     #006644;
+
+  /* Accent borders (stat cards + task priority) */
+  --accent-blue:     #0052cc;
+  --accent-green:    #36b37e;
+  --accent-amber:    #ffab00;
+  --accent-red:      #de350b;
+  --accent-dark-red: #bf2600;
+
+  /* Error */
+  --error-fg: #c0392b;
+  --error-bg: #fce4e4;
+  --error-border: #f5c6c6;
+}
+
+[data-theme="dark"] {
+  /* ─── Premium dark surfaces with subtle blue undertone ───────── */
+  --bg:              #101218;
+  --surface:         #181c25;
+  --card-bg:         #1e2330;
+  --card-shadow:     0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(99, 140, 255, 0.06);
+
+  /* Text — bright for readability but not blinding */
+  --text-primary:    #eaedf3;
+  --text-secondary:  #9ba4b4;
+  --text-muted:      #636d7e;
+
+  /* Border — subtle, slightly blue-tinted */
+  --border:          #2a3040;
+
+  /* Brand — vivid blue that pops on dark */
+  --primary-blue:    #5b8def;
+  --primary-blue-dk: #7fa8f7;
+  --primary-glow:    rgba(91, 141, 239, 0.15);
+
+  /* Priority badges — rich jewel tones, not muddy ────────────── */
+  --badge-urgent-bg: rgba(255,  85,  85, 0.15); --badge-urgent-fg: #ff6b6b;
+  --badge-high-bg:   rgba(255, 160,  64, 0.15); --badge-high-fg:   #ffa040;
+  --badge-medium-bg: rgba(255, 204,  64, 0.15); --badge-medium-fg: #ffd048;
+  --badge-low-bg:    rgba( 64, 200, 140, 0.15); --badge-low-fg:    #40c88c;
+
+  /* Status badges — gentle translucent fills */
+  --status-todo-bg:     rgba(155, 164, 180, 0.12); --status-todo-fg:     #9ba4b4;
+  --status-progress-bg: rgba( 91, 141, 239, 0.14); --status-progress-fg: #7fa8f7;
+  --status-done-bg:     rgba( 64, 200, 140, 0.14); --status-done-fg:     #40c88c;
+
+  /* Kanban column headers */
+  --col-todo-bg:     rgba(155, 164, 180, 0.10); --col-todo-fg:     #9ba4b4;
+  --col-progress-bg: rgba( 91, 141, 239, 0.12); --col-progress-fg: #7fa8f7;
+  --col-done-bg:     rgba( 64, 200, 140, 0.12); --col-done-fg:     #40c88c;
+
+  /* Accent borders — brighter to read against dark cards */
+  --accent-blue:     #5b8def;
+  --accent-green:    #40c88c;
+  --accent-amber:    #ffd048;
+  --accent-red:      #ff6b6b;
+  --accent-dark-red: #ff5252;
+
+  /* Error */
+  --error-fg: #ff6b6b;
+  --error-bg: rgba(255, 85, 85, 0.1);
+  --error-border: rgba(255, 85, 85, 0.2);
+}
+
+/* ── Reset ───────────────────────────────────────────────────────── */
 *,
 *::before,
 *::after {
@@ -8,8 +108,8 @@
 
 body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
-  background: #f4f5f7;
-  color: #172b4d;
+  background: var(--bg);
+  color: var(--text-primary);
   line-height: 1.5;
+  transition: background 0.3s ease, color 0.3s ease;
 }
-
