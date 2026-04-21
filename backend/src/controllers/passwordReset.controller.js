@@ -1,5 +1,6 @@
 const usersService = require('../services/users.service');
 const passwordResetService = require('../services/passwordReset.service');
+const emailService = require('../services/email.service');
 const logger = require('../utils/logger');
 
 /**
@@ -13,9 +14,17 @@ async function forgotPassword(req, res, next) {
 
         if (user) {
             const rawToken = await passwordResetService.createPasswordResetToken(user.id);
-            // In production this would be emailed; log it for dev/testing
+            const frontendUrl = process.env.FRONTEND_URL || 'http://localhost:5173';
+            const resetUrl = `${frontendUrl}/reset-password?token=${rawToken}`;
+
+            // Fire-and-forget — any failure (including missing API key) still
+            // returns generic success so enumeration isn't possible.
+            emailService.sendPasswordResetEmail({ to: email, resetUrl }).catch((err) => {
+                logger.warn(`password reset email failed for ${email}: ${err.message}`);
+            });
+
             if (process.env.NODE_ENV !== 'production') {
-                logger.info(`[DEV] Password reset token for ${email}: ${rawToken}`);
+                logger.info(`[DEV] Password reset URL for ${email}: ${resetUrl}`);
             }
         }
 

@@ -9,8 +9,10 @@ const profileRouter = require('./routes/profile.routes');
 const labelsRouter = require('./routes/labels.routes');
 const projectsRouter = require('./routes/projects.routes');
 const sseRouter = require('./routes/sse.routes');
+const notificationsRoutes = require('./routes/notifications.routes');
 const { authenticate } = require('./middleware/auth.middleware');
 const errorMiddleware = require('./middleware/error.middleware');
+const logger = require('./utils/logger');
 
 const passport = require('./config/passport');
 
@@ -42,15 +44,31 @@ app.get('/db-test', async (req, res, next) => {
 // Auth: register, login, refresh, logout (all public)
 app.use('/auth', authRouter);
 
+// Notifications: VAPID public key endpoint is public; the rest mount protected below.
+app.use('/notifications', notificationsRoutes.publicRouter);
+
 // ── Protected routes ──────────────────────────────────────────────
 app.use('/tasks', authenticate, tasksRouter);
 app.use('/activity', authenticate, activityRouter);
 app.use('/profile', authenticate, profileRouter);
 app.use('/projects', authenticate, projectsRouter);
+app.use('/notifications', notificationsRoutes.protectedRouter);
 app.use('/', authenticate, labelsRouter);
 app.use('/', sseRouter); // SSE router does its own auth (supports query-param token)
 
 // ── Global error handler (must be last) ──────────────────────────
 app.use(errorMiddleware);
+
+// ── Scheduler ─────────────────────────────────────────────────────
+// Start the daily reminder job. Skipped in test env. Wrapped so scheduler
+// failures never take the server down.
+if (process.env.NODE_ENV !== 'test') {
+    try {
+        const { startScheduler } = require('./services/scheduler.service');
+        startScheduler();
+    } catch (err) {
+        logger.error(`Failed to start notification scheduler: ${err.message}`);
+    }
+}
 
 module.exports = app;
