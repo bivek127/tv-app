@@ -96,6 +96,28 @@ const uuidParamSchema = z.object({
     id: z.string().uuid('Invalid task ID format'),
 });
 
+const ALLOWED_REMIND_DAYS = [0, 1, 2, 3, 7];
+
+const updateNotificationPreferencesSchema = z.object({
+    email_enabled: z.boolean().optional(),
+    push_enabled: z.boolean().optional(),
+    remind_days_before: z.array(z.number().int().refine((n) => ALLOWED_REMIND_DAYS.includes(n), {
+        message: `remind_days_before values must be one of ${ALLOWED_REMIND_DAYS.join(', ')}`,
+    })).max(5).optional(),
+});
+
+const pushSubscriptionSchema = z.object({
+    endpoint: z.string().url('endpoint must be a valid URL'),
+    keys: z.object({
+        p256dh: z.string().min(1),
+        auth: z.string().min(1),
+    }),
+});
+
+const deletePushSubscriptionSchema = z.object({
+    endpoint: z.string().url('endpoint must be a valid URL'),
+});
+
 // ── Middleware factory ─────────────────────────────────────────────
 
 /**
@@ -142,6 +164,9 @@ module.exports = {
     updateProjectSchema,
     updateProfileSchema,
     updatePasswordSchema,
+    updateNotificationPreferencesSchema,
+    pushSubscriptionSchema,
+    deletePushSubscriptionSchema,
     uuidParamSchema,
     validateBody,
     validateParams,

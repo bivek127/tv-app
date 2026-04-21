@@ -23,3 +23,13 @@ createRoot(document.getElementById('root')).render(
         </BrowserRouter>
     </StrictMode>,
 )
+
+// Register the push service worker. Non-blocking — a failure here never
+// prevents the app from rendering.
+if ('serviceWorker' in navigator) {
+    window.addEventListener('load', () => {
+        navigator.serviceWorker.register('/sw.js').catch((err) => {
+            console.warn('Service worker registration failed:', err);
+        });
+    });
+}
