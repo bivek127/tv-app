@@ -121,8 +121,15 @@
 }
 
 .modal-field select,
-.modal-field input[type="date"] {
+.modal-field input[type="date"],
+.modal-field input[type="datetime-local"] {
   font-size: 0.85rem;
+}
+
+.modal-hint {
+  font-size: 0.8rem;
+  color: var(--text-secondary, #5e6c84);
+  margin: 0;
 }
 
 /* Actions */

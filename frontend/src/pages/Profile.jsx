@@ -7,13 +7,6 @@ import { useAuth } from '../context/AuthContext';
 import { useToast } from '../context/ToastContext';
 import './Profile.css';
 
-const REMIND_DAY_OPTIONS = [
-    { value: 1, label: '1 day before' },
-    { value: 2, label: '2 days before' },
-    { value: 3, label: '3 days before' },
-    { value: 7, label: '7 days before' },
-];
-
 function Profile() {
     const { logout } = useAuth();
     const navigate = useNavigate();
@@ -28,9 +21,9 @@ function Profile() {
     const [confirmPassword, setConfirmPassword] = useState('');
     const [pwSaving, setPwSaving] = useState(false);
 
-    // Notification preferences
+    // Notification preferences — master on/off switches. Per-task
+    // reminder timing is set on each task, not here.
     const [emailEnabled, setEmailEnabled] = useState(false);
-    const [remindDays, setRemindDays] = useState([1]);
     const [prefsSaving, setPrefsSaving] = useState(false);
     const [prefsLoaded, setPrefsLoaded] = useState(false);
 
@@ -52,16 +45,9 @@ function Profile() {
         getPreferences().then((data) => {
             const prefs = data.preferences;
             setEmailEnabled(!!prefs.email_enabled);
-            setRemindDays(Array.isArray(prefs.remind_days_before) ? prefs.remind_days_before : [1]);
             setPrefsLoaded(true);
         }).catch(() => setPrefsLoaded(true));
     }, []);
-
-    const toggleRemindDay = (day) => {
-        setRemindDays((days) => (
-            days.includes(day) ? days.filter((d) => d !== day) : [...days, day].sort((a, b) => a - b)
-        ));
-    };
 
     const handleTogglePush = async () => {
         try {
@@ -82,11 +68,7 @@ function Profile() {
     const handleSavePrefs = async () => {
         setPrefsSaving(true);
         try {
-            const patch = {
-                email_enabled: emailEnabled,
-                remind_days_before: emailEnabled && remindDays.length === 0 ? [1] : remindDays,
-            };
-            await updatePreferences(patch);
+            await updatePreferences({ email_enabled: emailEnabled });
             showToast('Notification settings saved', 'success');
         } catch (err) {
             showToast(err.message || 'Could not save settings', 'error');
@@ -197,11 +179,18 @@ function Profile() {
 
                 <section className="profile-section">
                     <h2>Notifications</h2>
+                    <p className="notif-section-hint">
+                        Master on/off switches. Set when to be reminded on each task individually.
+                    </p>
 
                     <div className="notif-row">
                         <div>
                             <div className="notif-row-title">Email reminders</div>
-                            <div className="notif-row-hint">Get an email each morning when tasks are due.</div>
+                            <div className="notif-row-hint">
+                                {emailEnabled
+                                    ? 'Tasks with a reminder time will email you when that time arrives.'
+                                    : 'Turn on to receive task reminders by email.'}
+                            </div>
                         </div>
                         <label className="toggle">
                             <input
@@ -213,22 +202,6 @@ function Profile() {
                             <span className="toggle-slider" />
                         </label>
                     </div>
-
-                    {emailEnabled && (
-                        <div className="notif-days">
-                            <div className="notif-days-label">Send reminders:</div>
-                            {REMIND_DAY_OPTIONS.map((opt) => (
-                                <label key={opt.value} className="notif-day-checkbox">
-                                    <input
-                                        type="checkbox"
-                                        checked={remindDays.includes(opt.value)}
-                                        onChange={() => toggleRemindDay(opt.value)}
-                                    />
-                                    <span>{opt.label}</span>
-                                </label>
-                            ))}
-                        </div>
-                    )}
 
                     <div className="notif-row">
                         <div>

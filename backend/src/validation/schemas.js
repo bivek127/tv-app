@@ -32,6 +32,7 @@ const createTaskSchema = z.object({
     priority:    z.enum(PRIORITIES).default('medium'),
     status:      z.enum(STATUSES).default('todo'),
     due_date:    z.string().date('Invalid date format').nullable().optional(),
+    reminder_at: z.string().datetime('Invalid reminder timestamp').nullable().optional(),
     projectId:   z.string().uuid('Invalid project ID').optional(),
 });
 
@@ -41,6 +42,7 @@ const updateTaskSchema = z.object({
     priority:    z.enum(PRIORITIES).default('medium'),
     status:      z.enum(STATUSES).default('todo'),
     due_date:    z.string().date('Invalid date format').nullable().optional(),
+    reminder_at: z.string().datetime('Invalid reminder timestamp').nullable().optional(),
 });
 
 // ── Subtasks ──────────────────────────────────────────────────────
@@ -96,14 +98,9 @@ const uuidParamSchema = z.object({
     id: z.string().uuid('Invalid task ID format'),
 });
 
-const ALLOWED_REMIND_DAYS = [0, 1, 2, 3, 7];
-
 const updateNotificationPreferencesSchema = z.object({
     email_enabled: z.boolean().optional(),
-    push_enabled: z.boolean().optional(),
-    remind_days_before: z.array(z.number().int().refine((n) => ALLOWED_REMIND_DAYS.includes(n), {
-        message: `remind_days_before values must be one of ${ALLOWED_REMIND_DAYS.join(', ')}`,
-    })).max(5).optional(),
+    push_enabled:  z.boolean().optional(),
 });
 
 const pushSubscriptionSchema = z.object({
