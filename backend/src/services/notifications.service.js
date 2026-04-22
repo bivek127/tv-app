@@ -3,12 +3,11 @@ const pool = require('../db');
 const DEFAULTS = {
     email_enabled: false,
     push_enabled: false,
-    remind_days_before: [1],
 };
 
 async function getPreferences(userId) {
     const result = await pool.query(
-        `SELECT email_enabled, push_enabled, remind_days_before
+        `SELECT email_enabled, push_enabled
          FROM notification_preferences
          WHERE user_id = $1`,
         [userId]
@@ -17,17 +16,16 @@ async function getPreferences(userId) {
     return result.rows[0];
 }
 
-async function upsertPreferences(userId, { email_enabled, push_enabled, remind_days_before }) {
+async function upsertPreferences(userId, { email_enabled, push_enabled }) {
     const result = await pool.query(
-        `INSERT INTO notification_preferences (user_id, email_enabled, push_enabled, remind_days_before)
-         VALUES ($1, $2, $3, $4)
+        `INSERT INTO notification_preferences (user_id, email_enabled, push_enabled)
+         VALUES ($1, $2, $3)
          ON CONFLICT (user_id) DO UPDATE SET
-             email_enabled      = EXCLUDED.email_enabled,
-             push_enabled       = EXCLUDED.push_enabled,
-             remind_days_before = EXCLUDED.remind_days_before,
-             updated_at         = NOW()
-         RETURNING email_enabled, push_enabled, remind_days_before`,
-        [userId, email_enabled, push_enabled, remind_days_before]
+             email_enabled = EXCLUDED.email_enabled,
+             push_enabled  = EXCLUDED.push_enabled,
+             updated_at    = NOW()
+         RETURNING email_enabled, push_enabled`,
+        [userId, email_enabled, push_enabled]
     );
     return result.rows[0];
 }
@@ -60,43 +58,47 @@ async function getPushSubscriptions(userId) {
 }
 
 /**
- * Find users whose notification prefs include `daysFromNow`, and who have
- * at least one task due in exactly that many days. Returns each user along
- * with their due tasks for that window.
+ * Find all pending reminders whose `reminder_at` has passed. Only includes
+ * tasks whose owner has at least one notification channel enabled, and
+ * which are still open (not done). Returns one row per task.
  */
-async function getUsersForReminder(daysFromNow) {
+async function getPendingReminders() {
     const result = await pool.query(
         `
         SELECT
-            u.id        AS user_id,
-            u.email     AS email,
-            u.name      AS name,
+            t.id           AS task_id,
+            t.title        AS title,
+            t.due_date     AS due_date,
+            t.reminder_at  AS reminder_at,
+            t.project_id   AS project_id,
+            p.name         AS project_name,
+            u.id           AS user_id,
+            u.email        AS email,
+            u.name         AS user_name,
             np.email_enabled,
-            np.push_enabled,
-            json_agg(
-                json_build_object(
-                    'id',           t.id,
-                    'title',        t.title,
-                    'due_date',     t.due_date,
-                    'project_id',   t.project_id,
-                    'project_name', p.name
-                ) ORDER BY t.due_date ASC
-            ) AS tasks
-        FROM users u
+            np.push_enabled
+        FROM tasks t
+        JOIN users u                     ON u.id = t.user_id
         JOIN notification_preferences np ON np.user_id = u.id
-        JOIN tasks t                     ON t.user_id = u.id
         LEFT JOIN projects p             ON p.id = t.project_id
         WHERE
-            (np.email_enabled = true OR np.push_enabled = true)
-            AND $1 = ANY (np.remind_days_before)
-            AND t.due_date IS NOT NULL
+            t.reminder_at IS NOT NULL
+            AND t.reminder_sent_at IS NULL
+            AND t.reminder_at <= NOW()
             AND t.status <> 'done'
-            AND DATE(t.due_date) = (CURRENT_DATE + ($1 || ' days')::INTERVAL)::DATE
-        GROUP BY u.id, u.email, u.name, np.email_enabled, np.push_enabled
-        `,
-        [daysFromNow]
+            AND (np.email_enabled = true OR np.push_enabled = true)
+        ORDER BY t.reminder_at ASC
+        LIMIT 500
+        `
     );
     return result.rows;
+}
+
+async function markReminderSent(taskId) {
+    await pool.query(
+        `UPDATE tasks SET reminder_sent_at = NOW() WHERE id = $1`,
+        [taskId]
+    );
 }
 
 module.exports = {
@@ -105,5 +107,6 @@ module.exports = {
     savePushSubscription,
     deletePushSubscription,
     getPushSubscriptions,
-    getUsersForReminder,
+    getPendingReminders,
+    markReminderSent,
 };

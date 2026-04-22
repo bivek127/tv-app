@@ -432,9 +432,16 @@ button:hover:not(:disabled) {
 }
 
 .task-form-row select,
-.task-form-row input[type="date"] {
+.task-form-row input[type="date"],
+.task-form-row input[type="datetime-local"] {
   flex: 1;
   min-width: 120px;
+}
+
+.task-form-hint {
+  font-size: 0.8rem;
+  color: var(--text-secondary);
+  margin: 0;
 }
 
 select {

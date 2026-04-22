@@ -66,13 +66,13 @@ async function getAllTasks(userId, { projectId, search, cursor, limit } = {}) {
  * Create a new task inside the given project. Returns null if the project does
  * not belong to the user (prevents cross-user task insertion).
  */
-async function createTask(userId, { projectId, title, description, priority, status, due_date }) {
+async function createTask(userId, { projectId, title, description, priority, status, due_date, reminder_at }) {
     const result = await pool.query(
-        `INSERT INTO tasks (title, description, user_id, priority, status, due_date, project_id)
-         SELECT $1, $2, $3, $4, $5, $6, $7
+        `INSERT INTO tasks (title, description, user_id, priority, status, due_date, project_id, reminder_at)
+         SELECT $1, $2, $3, $4, $5, $6, $7, $8
          WHERE EXISTS (SELECT 1 FROM projects WHERE id = $7 AND user_id = $3)
          RETURNING *`,
-        [title, description ?? null, userId, priority, status, due_date ?? null, projectId]
+        [title, description ?? null, userId, priority, status, due_date ?? null, projectId, reminder_at ?? null]
     );
     return result.rows[0] || null;
 }
@@ -80,8 +80,11 @@ async function createTask(userId, { projectId, title, description, priority, sta
 /**
  * Update a task — enforces ownership via user_id. Tasks do not move between
  * projects in this version, so project_id is not modified here.
+ *
+ * When `reminder_at` changes (including being cleared), we also reset
+ * `reminder_sent_at` so a rescheduled reminder actually fires again.
  */
-async function updateTask(taskId, userId, title, description, priority, status, due_date) {
+async function updateTask(taskId, userId, title, description, priority, status, due_date, reminder_at) {
     const result = await pool.query(
         `UPDATE tasks
          SET title       = $1,
@@ -89,10 +92,15 @@ async function updateTask(taskId, userId, title, description, priority, status, 
              priority    = $3,
              status      = $4,
              due_date    = $5,
+             reminder_at = $6,
+             reminder_sent_at = CASE
+                 WHEN reminder_at IS DISTINCT FROM $6 THEN NULL
+                 ELSE reminder_sent_at
+             END,
              updated_at  = NOW()
-         WHERE id = $6 AND user_id = $7
+         WHERE id = $7 AND user_id = $8
          RETURNING *`,
-        [title, description ?? null, priority, status, due_date ?? null, taskId, userId]
+        [title, description ?? null, priority, status, due_date ?? null, reminder_at ?? null, taskId, userId]
     );
     return result.rows[0] || null;
 }

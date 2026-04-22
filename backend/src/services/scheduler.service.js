@@ -20,11 +20,6 @@ if (vapidPublic && vapidPrivate) {
     logger.warn('VAPID keys missing — push notifications will silently no-op.');
 }
 
-/**
- * Which day offsets we need to consider. Kept small so the job stays cheap.
- */
-const SUPPORTED_DAYS = [0, 1, 2, 3, 7];
-
 async function sendPushToUser(userId, payload) {
     if (!vapidConfigured) return;
     const subs = await notificationsService.getPushSubscriptions(userId);
@@ -48,52 +43,74 @@ async function sendPushToUser(userId, payload) {
     }));
 }
 
-async function runReminderJob() {
-    logger.info('Reminder job: starting');
-    for (const daysFromNow of SUPPORTED_DAYS) {
-        try {
-            const rows = await notificationsService.getUsersForReminder(daysFromNow);
-            for (const row of rows) {
-                const { user_id, email, name, email_enabled, push_enabled, tasks } = row;
-                if (!tasks || tasks.length === 0) continue;
+function describeWhen(dueDate) {
+    if (!dueDate) return '';
+    const due = new Date(dueDate);
+    const diffMs = due - new Date();
+    const diffMin = Math.round(diffMs / 60000);
+    if (diffMin < 0) return ' — overdue';
+    if (diffMin < 60) return ` — due in ${diffMin} min`;
+    const diffHr = Math.round(diffMin / 60);
+    if (diffHr < 24) return ` — due in ${diffHr} hr`;
+    const diffDay = Math.round(diffHr / 24);
+    return ` — due in ${diffDay} day${diffDay === 1 ? '' : 's'}`;
+}
 
-                if (email_enabled) {
-                    await emailService.sendReminderEmail({
-                        to: email,
-                        userName: name,
-                        tasks,
-                        daysUntilDue: daysFromNow,
-                    });
-                }
+/**
+ * Send a single task reminder. Marks the task as sent regardless of whether
+ * email/push succeeds — we'd rather skip a failed retry than spam the user.
+ */
+async function sendTaskReminder(row) {
+    const { task_id, title, due_date, email, user_name, user_id, email_enabled, push_enabled, project_name } = row;
+    const whenSuffix = describeWhen(due_date);
 
-                if (push_enabled) {
-                    const timing = daysFromNow === 0
-                        ? 'due today'
-                        : daysFromNow === 1
-                            ? 'due tomorrow'
-                            : `due in ${daysFromNow} days`;
-                    await sendPushToUser(user_id, {
-                        title: `TaskVault — ${tasks.length} task${tasks.length === 1 ? '' : 's'} ${timing}`,
-                        body: tasks.slice(0, 3).map((t) => t.title).join(', '),
-                        url: '/',
-                    });
-                }
-            }
-        } catch (err) {
-            logger.error(`Reminder job failed for offset ${daysFromNow}: ${err.message}`);
-        }
+    if (email_enabled && email) {
+        await emailService.sendReminderEmail({
+            to: email,
+            userName: user_name,
+            tasks: [{ title, project_name, due_date }],
+            // The existing template uses this only for the subject line.
+            // "0" means "today" which is close enough for any pre-due reminder.
+            daysUntilDue: 0,
+        });
     }
-    logger.info('Reminder job: done');
+
+    if (push_enabled) {
+        await sendPushToUser(user_id, {
+            title: `Reminder: ${title}`,
+            body: `${project_name ? project_name + ' ' : ''}${whenSuffix.replace(/^ — /, '')}`.trim() || 'Task reminder',
+            url: '/',
+        });
+    }
+
+    await notificationsService.markReminderSent(task_id);
+}
+
+async function runReminderJob() {
+    try {
+        const pending = await notificationsService.getPendingReminders();
+        if (pending.length === 0) return;
+        logger.info(`Reminder scan: ${pending.length} pending`);
+        for (const row of pending) {
+            try {
+                await sendTaskReminder(row);
+            } catch (err) {
+                logger.error(`Reminder for task ${row.task_id} failed: ${err.message}`);
+            }
+        }
+    } catch (err) {
+        logger.error(`runReminderJob uncaught: ${err.message}`);
+    }
 }
 
 function startScheduler() {
-    // Every day at 8:00 AM, server local time.
-    cron.schedule('0 8 * * *', () => {
-        runReminderJob().catch((err) => {
-            logger.error(`runReminderJob uncaught: ${err.message}`);
-        });
+    // Every 15 minutes on the quarter-hour. Per-task reminders have
+    // minute-level precision from the user's perspective; a 15-min window
+    // keeps the scan cheap without feeling laggy.
+    cron.schedule('*/15 * * * *', () => {
+        runReminderJob();
     });
-    logger.info('Notification scheduler started (daily 08:00).');
+    logger.info('Notification scheduler started (every 15 minutes).');
 }
 
 module.exports = { startScheduler, runReminderJob, sendPushToUser };

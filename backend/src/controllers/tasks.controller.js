@@ -40,13 +40,13 @@ async function getTasks(req, res, next) {
 
 async function createTask(req, res, next) {
     try {
-        const { title, description, priority, status, due_date, projectId: rawProjectId } = req.body;
+        const { title, description, priority, status, due_date, reminder_at, projectId: rawProjectId } = req.body;
         const projectId = await resolveProjectId(req.user.id, rawProjectId);
         if (!projectId) {
             return res.status(404).json({ success: false, error: 'Project not found' });
         }
         const task = await tasksService.createTask(req.user.id, {
-            projectId, title, description, priority, status, due_date,
+            projectId, title, description, priority, status, due_date, reminder_at,
         });
         if (!task) {
             return res.status(404).json({ success: false, error: 'Project not found' });
@@ -68,8 +68,8 @@ async function createTask(req, res, next) {
 async function updateTask(req, res, next) {
     try {
         const { id } = req.params;
-        const { title, description, priority, status, due_date } = req.body;
-        const task = await tasksService.updateTask(id, req.user.id, title, description, priority, status, due_date);
+        const { title, description, priority, status, due_date, reminder_at } = req.body;
+        const task = await tasksService.updateTask(id, req.user.id, title, description, priority, status, due_date, reminder_at);
         if (!task) {
             return res.status(404).json({ success: false, error: 'Task not found' });
         }

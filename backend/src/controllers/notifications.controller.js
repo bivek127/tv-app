@@ -21,8 +21,7 @@ async function updatePreferences(req, res, next) {
         const current = await notificationsService.getPreferences(req.user.id);
         const merged = {
             email_enabled: req.body.email_enabled ?? current.email_enabled,
-            push_enabled: req.body.push_enabled ?? current.push_enabled,
-            remind_days_before: req.body.remind_days_before ?? current.remind_days_before,
+            push_enabled:  req.body.push_enabled  ?? current.push_enabled,
         };
         const prefs = await notificationsService.upsertPreferences(req.user.id, merged);
         res.json({ success: true, data: { preferences: prefs } });

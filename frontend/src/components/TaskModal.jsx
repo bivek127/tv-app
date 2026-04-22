@@ -5,6 +5,7 @@ import Checklist from './Checklist';
 import LabelManager from './LabelManager';
 import DependencyManager from './DependencyManager';
 import { useToast } from '../context/ToastContext';
+import { REMINDER_PRESETS, computeReminderAt, inferReminderSelection } from '../lib/reminders';
 import './TaskModal.css';
 
 const PRIORITY_COLORS = {
@@ -20,10 +21,18 @@ function TaskModal({ task, onClose, onRefresh, allTasks = [] }) {
     const [priority, setPriority] = useState(task.priority || 'medium');
     const [status, setStatus] = useState(task.status || 'todo');
     const [dueDate, setDueDate] = useState(task.due_date ? task.due_date.slice(0, 10) : '');
+    const initialReminder = inferReminderSelection({
+        reminderAt: task.reminder_at,
+        dueDate: task.due_date ? task.due_date.slice(0, 10) : '',
+    });
+    const [reminderPreset, setReminderPreset] = useState(initialReminder.preset);
+    const [reminderCustom, setReminderCustom] = useState(initialReminder.customTime);
     const [loading, setLoading] = useState(false);
     const [dirty, setDirty] = useState(false);
     const [taskLabels, setTaskLabels] = useState(task.labels || []);
     const { showToast } = useToast();
+
+    const needsDueDate = ['15min', '1hour', '1day', '1week'].includes(reminderPreset) && !dueDate;
 
     const refreshLabels = () => {
         getLabelsForTask(task.id).then(setTaskLabels).catch(() => {});
@@ -42,6 +51,13 @@ function TaskModal({ task, onClose, onRefresh, allTasks = [] }) {
 
     const handleSave = async () => {
         if (!title.trim()) { showToast('Title is required', 'warning'); return; }
+        if (needsDueDate) { showToast('Set a due date to use a relative reminder', 'warning'); return; }
+
+        const reminder_at = computeReminderAt({ preset: reminderPreset, dueDate, customTime: reminderCustom });
+        if (reminderPreset !== 'none' && !reminder_at) {
+            showToast('Pick a valid reminder time', 'warning'); return;
+        }
+
         setLoading(true);
         try {
             await updateTask(task.id, {
@@ -50,6 +66,7 @@ function TaskModal({ task, onClose, onRefresh, allTasks = [] }) {
                 priority,
                 status,
                 due_date: dueDate || null,
+                reminder_at,
             });
             setDirty(false);
             showToast('Task saved', 'success');
@@ -130,7 +147,31 @@ function TaskModal({ task, onClose, onRefresh, allTasks = [] }) {
                                     onChange={(e) => markDirty(setDueDate)(e.target.value)}
                                 />
                             </div>
+                            <div className="modal-field">
+                                <label className="modal-label">Reminder</label>
+                                <select
+                                    value={reminderPreset}
+                                    onChange={(e) => markDirty(setReminderPreset)(e.target.value)}
+                                >
+                                    {REMINDER_PRESETS.map((p) => (
+                                        <option key={p.value} value={p.value}>🔔 {p.label}</option>
+                                    ))}
+                                </select>
+                            </div>
+                            {reminderPreset === 'custom' && (
+                                <div className="modal-field">
+                                    <label className="modal-label">Remind at</label>
+                                    <input
+                                        type="datetime-local"
+                                        value={reminderCustom}
+                                        onChange={(e) => markDirty(setReminderCustom)(e.target.value)}
+                                    />
+                                </div>
+                            )}
                         </div>
+                        {needsDueDate && (
+                            <p className="modal-hint">Set a due date to use a relative reminder.</p>
+                        )}
 
                         <div className="modal-actions">
                             <button onClick={handleSave} disabled={loading || !dirty}>

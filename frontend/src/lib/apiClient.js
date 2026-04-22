@@ -66,10 +66,12 @@ async function attemptRefresh() {
 
         if (!res.ok) throw new Error('Refresh failed');
 
-        const data = await res.json();
-        setToken(data.accessToken);
-        drainQueue(null, data.accessToken);
-        return data.accessToken;
+        const body = await res.json();
+        const accessToken = body?.data?.accessToken ?? body?.accessToken;
+        if (!accessToken) throw new Error('Refresh response missing accessToken');
+        setToken(accessToken);
+        drainQueue(null, accessToken);
+        return accessToken;
     } catch (err) {
         drainQueue(err, null);
         removeToken();

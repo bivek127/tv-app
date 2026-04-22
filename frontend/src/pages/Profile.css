@@ -142,6 +142,12 @@
 }
 
 /* ── Notifications section ────────────────────────────────────────── */
+.notif-section-hint {
+  font-size: 0.82rem;
+  color: var(--text-secondary);
+  margin: -0.25rem 0 0.25rem;
+}
+
 .notif-row {
   display: flex;
   align-items: center;
