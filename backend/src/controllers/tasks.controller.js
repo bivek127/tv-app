@@ -147,6 +147,25 @@ async function exportCsv(req, res, next) {
     }
 }
 
+async function getCalendarTasks(req, res, next) {
+    try {
+        const projectId = await resolveProjectId(req.user.id, req.query.projectId);
+        if (!projectId) {
+            return res.status(404).json({ success: false, error: 'Project not found' });
+        }
+        const now = new Date();
+        const year = Number.parseInt(req.query.year, 10) || now.getFullYear();
+        const month = Number.parseInt(req.query.month, 10) || (now.getMonth() + 1);
+        if (month < 1 || month > 12) {
+            return res.status(400).json({ success: false, error: 'month must be 1-12' });
+        }
+        const tasks = await tasksService.getTasksForCalendar(req.user.id, projectId, year, month);
+        res.json({ success: true, data: { tasks } });
+    } catch (err) {
+        next(err);
+    }
+}
+
 async function getStats(req, res, next) {
     try {
         const projectId = await resolveProjectId(req.user.id, req.query.projectId);
@@ -178,4 +197,4 @@ async function getStats(req, res, next) {
     }
 }
 
-module.exports = { getTasks, createTask, updateTask, deleteTask, exportCsv, getStats };
+module.exports = { getTasks, createTask, updateTask, deleteTask, exportCsv, getStats, getCalendarTasks };

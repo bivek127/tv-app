@@ -149,4 +149,44 @@ async function getTaskStats(userId, projectId) {
     return result.rows[0];
 }
 
-module.exports = { getAllTasks, createTask, updateTask, deleteTask, getTaskStats };
+/**
+ * Fetch tasks with a due_date falling inside the calendar viewport for the
+ * given month. Includes a ~1-week buffer on each side so leading/trailing
+ * grid cells from adjacent months are populated too.
+ *
+ * Month is 1-indexed (1 = January).
+ */
+async function getTasksForCalendar(userId, projectId, year, month) {
+    const start = new Date(Date.UTC(year, month - 1, 1));
+    start.setUTCDate(start.getUTCDate() - 7);
+    const end = new Date(Date.UTC(year, month, 0));
+    end.setUTCDate(end.getUTCDate() + 7);
+
+    const result = await pool.query(
+        `SELECT t.*,
+                COALESCE(
+                    json_agg(json_build_object('id', l.id, 'name', l.name, 'color', l.color))
+                    FILTER (WHERE l.id IS NOT NULL), '[]'
+                ) AS labels,
+                COALESCE((
+                    SELECT COUNT(*)::int FROM subtasks WHERE task_id = t.id
+                ), 0) AS subtasks_total,
+                COALESCE((
+                    SELECT COUNT(*)::int FROM subtasks WHERE task_id = t.id AND completed = true
+                ), 0) AS subtasks_done
+         FROM tasks t
+         LEFT JOIN task_labels tl ON tl.task_id = t.id
+         LEFT JOIN labels l ON l.id = tl.label_id
+         WHERE t.user_id = $1
+           AND t.project_id = $2
+           AND t.due_date IS NOT NULL
+           AND t.due_date >= $3
+           AND t.due_date <= $4
+         GROUP BY t.id
+         ORDER BY t.due_date ASC, t.created_at ASC`,
+        [userId, projectId, start, end]
+    );
+    return result.rows;
+}
+
+module.exports = { getAllTasks, createTask, updateTask, deleteTask, getTaskStats, getTasksForCalendar };
