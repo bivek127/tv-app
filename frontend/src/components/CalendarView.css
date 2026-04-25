@@ -75,9 +75,9 @@
 /* ── Month grid ─────────────────────────────────────────────────── */
 .cal-month,
 .cal-week {
-  background: var(--card-bg);
+  background: var(--surface);
   border: 1px solid var(--border);
-  border-radius: 10px;
+  border-radius: var(--radius-lg);
   overflow: hidden;
 }
 
@@ -128,7 +128,7 @@
   display: flex;
   flex-direction: column;
   gap: 0.35rem;
-  background: var(--card-bg);
+  background: var(--surface);
   min-height: 120px;
   height: 100%;
   cursor: pointer;
@@ -144,7 +144,7 @@
 }
 
 .cal-day-other {
-  background: var(--surface);
+  background: var(--bg);
 }
 
 .cal-day-other .cal-day-num {
@@ -152,8 +152,8 @@
 }
 
 .cal-day-today {
-  background: var(--primary-glow, transparent);
-  box-shadow: inset 0 0 0 2px var(--accent-blue);
+  background: var(--accent-soft);
+  box-shadow: inset 0 0 0 2px var(--accent);
 }
 
 .cal-day-past {
@@ -165,9 +165,9 @@
 }
 
 .cal-day-dragover {
-  outline: 2px dashed var(--accent-blue);
+  outline: 2px dashed var(--accent);
   outline-offset: -4px;
-  background: var(--primary-glow);
+  background: var(--accent-soft);
 }
 
 .cal-day-header {
@@ -184,11 +184,11 @@
 }
 
 .cal-today-pill {
-  font-size: 0.65rem;
+  font-size: 0.62rem;
   font-weight: 700;
-  padding: 0.1rem 0.4rem;
-  border-radius: 10px;
-  background: var(--accent-blue);
+  padding: 0.1rem 0.45rem;
+  border-radius: 999px;
+  background: var(--accent);
   color: #fff;
   text-transform: uppercase;
   letter-spacing: 0.05em;
@@ -210,7 +210,7 @@
 
 .cal-more {
   font-size: 0.7rem;
-  color: var(--primary-blue);
+  color: var(--accent);
   background: none;
   border: none;
   text-align: left;
@@ -226,11 +226,11 @@
 /* ── Task chip ──────────────────────────────────────────────────── */
 .cal-chip {
   position: relative;
-  padding: 0.25rem 0.5rem;
+  padding: 0.3rem 0.55rem;
   border-radius: 4px;
-  background: var(--surface);
+  background: var(--surface2);
   color: var(--text-primary);
-  border-left: 3px solid var(--text-muted);
+  border-left: 3px solid var(--text-3);
   font-size: 0.72rem;
   line-height: 1.3;
   cursor: grab;
@@ -240,14 +240,13 @@
 }
 
 .cal-chip:hover {
-  background: var(--card-bg);
-  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.08);
+  background: var(--surface3);
 }
 
-.cal-chip.priority-urgent { border-left-color: var(--accent-red); }
-.cal-chip.priority-high   { border-left-color: var(--accent-amber); }
-.cal-chip.priority-medium { border-left-color: var(--accent-blue); }
-.cal-chip.priority-low    { border-left-color: var(--accent-green); }
+.cal-chip.priority-urgent { border-left-color: var(--danger); }
+.cal-chip.priority-high   { border-left-color: var(--warning); }
+.cal-chip.priority-medium { border-left-color: var(--info); }
+.cal-chip.priority-low    { border-left-color: var(--success); }
 
 .cal-chip-title {
   display: block;
@@ -296,8 +295,8 @@
 
 .cal-chip-overlay {
   padding: 0.4rem 0.7rem;
-  box-shadow: 0 6px 20px rgba(0, 0, 0, 0.25);
-  background: var(--card-bg);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.35);
+  background: var(--surface3);
   cursor: grabbing;
 }
 
@@ -309,12 +308,12 @@
   left: 0;
   min-width: 240px;
   max-width: 320px;
-  background: var(--card-bg);
+  background: var(--surface2);
   color: var(--text-primary);
-  border: 1px solid var(--border);
-  border-radius: 8px;
+  border: 1px solid var(--border2);
+  border-radius: var(--radius);
   padding: 0.75rem;
-  box-shadow: var(--card-shadow);
+  box-shadow: 0 12px 32px rgba(0, 0, 0, 0.4);
   cursor: default;
   pointer-events: none;
   font-size: 0.8rem;
@@ -385,14 +384,14 @@
 
 .cal-quickadd input {
   width: 100%;
-  padding: 0.35rem 0.5rem;
+  padding: 0.4rem 0.6rem;
   font-size: 0.78rem;
-  border: 2px solid var(--primary-blue);
-  border-radius: 4px;
-  background: var(--card-bg);
+  border: 2px solid var(--accent);
+  border-radius: var(--radius-sm);
+  background: var(--surface);
   color: var(--text-primary);
   outline: none;
-  box-shadow: 0 2px 8px rgba(0, 0, 0, 0.15);
+  box-shadow: 0 4px 16px rgba(0, 0, 0, 0.3);
 }
 
 /* ── Responsive — narrow screens scroll horizontally ────────────── */

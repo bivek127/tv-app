@@ -1,22 +1,24 @@
 .modal-backdrop {
   position: fixed;
   inset: 0;
-  background: rgba(9, 30, 66, 0.54);
+  background: rgba(0, 0, 0, 0.65);
   display: flex;
   align-items: center;
   justify-content: center;
   z-index: 1000;
   padding: 1rem;
+  backdrop-filter: blur(4px);
 }
 
 .modal {
-  background: var(--surface, #fff);
-  border-radius: 10px;
+  background: var(--surface);
+  border: 1px solid var(--border2);
+  border-radius: var(--radius-lg);
   width: 100%;
   max-width: 760px;
   max-height: 90vh;
   overflow-y: auto;
-  box-shadow: 0 8px 32px rgba(0, 0, 0, 0.24);
+  box-shadow: 0 24px 80px rgba(0, 0, 0, 0.5);
   display: flex;
   flex-direction: column;
 }
@@ -26,17 +28,22 @@
   display: flex;
   align-items: center;
   gap: 0.75rem;
-  padding: 1.25rem 1.5rem 0.75rem;
-  border-bottom: 1px solid var(--border, #dfe1e6);
+  padding: 1.25rem 1.5rem 1rem;
+  border-bottom: 1px solid var(--border);
+  position: sticky;
+  top: 0;
+  background: var(--surface);
+  z-index: 1;
 }
 
 .modal-title-input {
   flex: 1;
-  font-size: 1.1rem;
-  font-weight: 600;
+  font-size: 1.05rem;
+  font-weight: 700;
+  letter-spacing: -0.3px;
   border: none;
   background: transparent;
-  color: var(--text-primary, #172b4d);
+  color: var(--text-primary);
   padding: 0.25rem 0;
   outline: none;
   border-bottom: 2px solid transparent;
@@ -44,91 +51,113 @@
 }
 
 .modal-title-input:focus {
-  border-bottom-color: #0052cc;
+  border-bottom-color: var(--accent);
 }
 
 .modal-close {
-  background: none;
-  border: none;
-  font-size: 1.4rem;
-  color: var(--text-secondary, #5e6c84);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  font-size: 1rem;
+  color: var(--text-2);
   cursor: pointer;
-  padding: 0 0.3rem;
+  padding: 0;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--radius-sm);
   line-height: 1;
   flex-shrink: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
 }
 
 .modal-close:hover {
-  color: var(--text-primary, #172b4d);
-  background: var(--bg, #f4f5f7);
-  border-radius: 4px;
+  background: var(--surface3);
+  color: var(--text-primary);
 }
 
 /* Body */
 .modal-body {
-  display: flex;
+  display: grid;
+  grid-template-columns: 1fr 1fr;
   gap: 1.5rem;
   padding: 1.25rem 1.5rem 1.5rem;
 }
 
 .modal-left {
-  flex: 1;
   display: flex;
   flex-direction: column;
-  gap: 1rem;
+  gap: 1.125rem;
   min-width: 0;
 }
 
 .modal-right {
-  width: 220px;
-  flex-shrink: 0;
-  border-left: 1px solid var(--border, #dfe1e6);
-  padding-left: 1.25rem;
+  display: flex;
+  flex-direction: column;
+  gap: 1.125rem;
+  min-width: 0;
+  border-left: none;
+  padding-left: 0;
 }
 
 /* Labels */
 .modal-label {
   display: block;
-  font-size: 0.72rem;
+  font-size: 0.68rem;
   font-weight: 700;
   text-transform: uppercase;
-  letter-spacing: 0.05em;
-  color: var(--text-secondary, #5e6c84);
-  margin-bottom: 0.35rem;
+  letter-spacing: 0.06em;
+  color: var(--text-3);
+  margin-bottom: 0.5rem;
 }
 
 /* Description */
 .modal-desc {
   width: 100%;
   resize: vertical;
-  font-size: 0.875rem;
-  color: var(--text-primary, #172b4d);
-  background: var(--surface, #fff);
+  font-size: 0.85rem;
+  color: var(--text-primary);
+  background: var(--surface2);
+  border: 1px solid var(--border);
+  border-radius: var(--radius-sm);
+  padding: 0.625rem 0.75rem;
+  font-family: inherit;
+  min-height: 90px;
+}
+
+.modal-desc:focus {
+  outline: none;
+  border-color: var(--accent);
 }
 
 /* Fields row */
 .modal-fields {
-  display: flex;
-  gap: 0.75rem;
-  flex-wrap: wrap;
+  display: grid;
+  grid-template-columns: 1fr 1fr 1fr;
+  gap: 0.625rem;
 }
 
 .modal-field {
   display: flex;
   flex-direction: column;
-  flex: 1;
-  min-width: 120px;
+  min-width: 0;
 }
 
 .modal-field select,
 .modal-field input[type="date"],
 .modal-field input[type="datetime-local"] {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+  padding: 0.5rem 0.65rem;
+}
+
+.modal-field input[type="date"],
+.modal-field input[type="datetime-local"] {
+  background: var(--surface2);
 }
 
 .modal-hint {
-  font-size: 0.8rem;
-  color: var(--text-secondary, #5e6c84);
+  font-size: 0.78rem;
+  color: var(--text-3);
   margin: 0;
 }
 
@@ -136,9 +165,16 @@
 .modal-actions {
   display: flex;
   gap: 0.5rem;
-  margin-top: 0.25rem;
+  margin-top: 0.5rem;
+  padding-top: 1rem;
+  border-top: 1px solid var(--border);
 }
 
 .modal-actions button {
-  font-size: 0.85rem;
+  font-size: 0.82rem;
+}
+
+@media (max-width: 720px) {
+  .modal-body { grid-template-columns: 1fr; }
+  .modal-fields { grid-template-columns: 1fr; }
 }

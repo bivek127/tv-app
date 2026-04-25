@@ -199,6 +199,10 @@ function ProjectsSidebar() {
     return (
         <>
             <aside className="sidebar">
+                <div className="sidebar-logo">
+                    <div className="sidebar-logo-icon">📋</div>
+                    <span className="sidebar-logo-text">TaskVault</span>
+                </div>
                 <div className="sidebar-header">
                     <h2 className="sidebar-title">Projects</h2>
                     <button
