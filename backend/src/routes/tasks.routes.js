@@ -7,6 +7,7 @@ const { validateBody, validateParams, createTaskSchema, updateTaskSchema, uuidPa
 
 router.get('/export', tasksController.exportCsv);
 router.get('/stats', tasksController.getStats);
+router.get('/calendar', tasksController.getCalendarTasks);
 router.get('/', tasksController.getTasks);
 router.post('/', validateBody(createTaskSchema), tasksController.createTask);
 router.put('/:id', validateParams(uuidParamSchema), validateBody(updateTaskSchema), tasksController.updateTask);

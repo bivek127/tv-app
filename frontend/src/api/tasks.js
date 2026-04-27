@@ -27,3 +27,12 @@ export function updateTask(id, data) {
 export function deleteTask(id) {
     return apiClient(`/tasks/${id}`, { method: 'DELETE' });
 }
+
+export function getCalendarTasks({ projectId, year, month } = {}) {
+    const params = new URLSearchParams();
+    if (projectId) params.set('projectId', projectId);
+    if (year)      params.set('year', String(year));
+    if (month)     params.set('month', String(month));
+    const qs = params.toString();
+    return apiClient(`/tasks/calendar${qs ? `?${qs}` : ''}`);
+}

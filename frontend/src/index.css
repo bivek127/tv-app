@@ -1,100 +1,141 @@
 /* ── CSS Custom Properties ────────────────────────────────────────── */
 :root {
-  /* Surfaces */
-  --bg:              #f4f5f7;
-  --surface:         #ebecf0;
+  /* Surfaces — light (default) */
+  --bg:              #f6f6f9;
+  --surface:         #ffffff;
+  --surface2:        #f1f1f6;
+  --surface3:        #e7e7ee;
   --card-bg:         #ffffff;
-  --card-shadow:     0 4px 16px rgba(0, 0, 0, 0.08);
+  --card-shadow:     0 4px 16px rgba(0, 0, 0, 0.06);
+
+  /* Borders */
+  --border:          rgba(0, 0, 0, 0.07);
+  --border2:         rgba(0, 0, 0, 0.12);
 
   /* Typography */
-  --text-primary:    #172b4d;
-  --text-secondary:  #5e6c84;
-  --text-muted:      #97a0af;
+  --text-primary:    #1a1a23;
+  --text-secondary:  #5a5a6e;
+  --text-muted:      #9090a0;
+  --text-2:          #5a5a6e;
+  --text-3:          #9090a0;
 
-  /* Borders & dividers */
-  --border:          #dfe1e6;
+  /* Brand / accent */
+  --accent:          oklch(0.58 0.2 270);
+  --accent-soft:     oklch(0.58 0.2 270 / 0.12);
+  --accent-hover:    oklch(0.52 0.2 270);
+  --primary-blue:    oklch(0.58 0.2 270);
+  --primary-blue-dk: oklch(0.52 0.2 270);
+  --primary-glow:    oklch(0.58 0.2 270 / 0.08);
 
-  /* Brand */
-  --primary-blue:    #0052cc;
-  --primary-blue-dk: #0747a6;
-  --primary-glow:    transparent;
+  /* Semantic colors */
+  --success:         oklch(0.6 0.15 160);
+  --success-soft:    oklch(0.6 0.15 160 / 0.12);
+  --warning:         oklch(0.7 0.15 60);
+  --warning-soft:    oklch(0.7 0.15 60 / 0.12);
+  --danger:          oklch(0.6 0.2 25);
+  --danger-soft:     oklch(0.6 0.2 25 / 0.12);
+  --info:            oklch(0.6 0.15 220);
+  --info-soft:       oklch(0.6 0.15 220 / 0.12);
 
-  /* Priority badge fills */
-  --badge-urgent-bg: #ffd5d5; --badge-urgent-fg: #8b0000;
-  --badge-high-bg:   #fff0e6; --badge-high-fg:   #bf3600;
-  --badge-medium-bg: #fffae6; --badge-medium-fg: #7a5c00;
-  --badge-low-bg:    #e3fcef; --badge-low-fg:    #006644;
+  /* Priority badges */
+  --badge-urgent-bg: oklch(0.6 0.2 25 / 0.14); --badge-urgent-fg: oklch(0.5 0.2 25);
+  --badge-high-bg:   oklch(0.7 0.16 50 / 0.14); --badge-high-fg:   oklch(0.55 0.16 50);
+  --badge-medium-bg: oklch(0.75 0.15 80 / 0.14); --badge-medium-fg: oklch(0.55 0.15 70);
+  --badge-low-bg:    oklch(0.6 0.15 160 / 0.14); --badge-low-fg:    oklch(0.5 0.15 160);
 
-  /* Status badge fills */
-  --status-todo-bg:     #f4f5f7; --status-todo-fg:     #5e6c84;
-  --status-progress-bg: #deebff; --status-progress-fg: #0747a6;
-  --status-done-bg:     #e3fcef; --status-done-fg:     #006644;
+  /* Status badges */
+  --status-todo-bg:     oklch(0.7 0.02 270 / 0.12); --status-todo-fg:     #5a5a6e;
+  --status-progress-bg: oklch(0.6 0.15 220 / 0.14); --status-progress-fg: oklch(0.5 0.15 220);
+  --status-done-bg:     oklch(0.6 0.15 160 / 0.14); --status-done-fg:     oklch(0.5 0.15 160);
 
-  /* Kanban column headers */
-  --col-todo-bg:     #e4e6ea; --col-todo-fg:     #42526e;
-  --col-progress-bg: #deebff; --col-progress-fg: #0747a6;
-  --col-done-bg:     #e3fcef; --col-done-fg:     #006644;
+  /* Kanban column headers (kept for compatibility) */
+  --col-todo-bg:     oklch(0.7 0.02 270 / 0.10); --col-todo-fg:     #5a5a6e;
+  --col-progress-bg: oklch(0.6 0.15 220 / 0.12); --col-progress-fg: oklch(0.5 0.15 220);
+  --col-done-bg:     oklch(0.6 0.15 160 / 0.12); --col-done-fg:     oklch(0.5 0.15 160);
 
-  /* Accent borders (stat cards + task priority) */
-  --accent-blue:     #0052cc;
-  --accent-green:    #36b37e;
-  --accent-amber:    #ffab00;
-  --accent-red:      #de350b;
-  --accent-dark-red: #bf2600;
+  /* Accents (kept for compatibility) */
+  --accent-blue:     oklch(0.58 0.2 270);
+  --accent-green:    oklch(0.6 0.15 160);
+  --accent-amber:    oklch(0.7 0.15 60);
+  --accent-red:      oklch(0.6 0.2 25);
+  --accent-dark-red: oklch(0.5 0.2 25);
 
   /* Error */
-  --error-fg: #c0392b;
-  --error-bg: #fce4e4;
-  --error-border: #f5c6c6;
+  --error-fg: oklch(0.55 0.2 25);
+  --error-bg: oklch(0.6 0.2 25 / 0.10);
+  --error-border: oklch(0.6 0.2 25 / 0.25);
+
+  /* Radii */
+  --radius-sm: 6px;
+  --radius:    10px;
+  --radius-lg: 14px;
 }
 
 [data-theme="dark"] {
-  /* ─── Premium dark surfaces with subtle blue undertone ───────── */
-  --bg:              #101218;
-  --surface:         #181c25;
-  --card-bg:         #1e2330;
-  --card-shadow:     0 4px 24px rgba(0, 0, 0, 0.4), 0 0 0 1px rgba(99, 140, 255, 0.06);
+  /* Surfaces — dark (matches the new design spec) */
+  --bg:              #0d0d10;
+  --surface:         #16161c;
+  --surface2:        #1e1e26;
+  --surface3:        #252530;
+  --card-bg:         #1e1e26;
+  --card-shadow:     0 4px 24px rgba(0, 0, 0, 0.45), 0 0 0 1px rgba(255, 255, 255, 0.04);
 
-  /* Text — bright for readability but not blinding */
-  --text-primary:    #eaedf3;
-  --text-secondary:  #9ba4b4;
-  --text-muted:      #636d7e;
+  /* Borders — barely-visible */
+  --border:          rgba(255, 255, 255, 0.07);
+  --border2:         rgba(255, 255, 255, 0.12);
 
-  /* Border — subtle, slightly blue-tinted */
-  --border:          #2a3040;
+  /* Typography */
+  --text-primary:    #e8e8ed;
+  --text-secondary:  #9898a8;
+  --text-muted:      #5a5a6e;
+  --text-2:          #9898a8;
+  --text-3:          #5a5a6e;
 
-  /* Brand — vivid blue that pops on dark */
-  --primary-blue:    #5b8def;
-  --primary-blue-dk: #7fa8f7;
-  --primary-glow:    rgba(91, 141, 239, 0.15);
+  /* Accent */
+  --accent:          oklch(0.65 0.2 270);
+  --accent-soft:     oklch(0.65 0.2 270 / 0.15);
+  --accent-hover:    oklch(0.7 0.2 270);
+  --primary-blue:    oklch(0.65 0.2 270);
+  --primary-blue-dk: oklch(0.7 0.2 270);
+  --primary-glow:    oklch(0.65 0.2 270 / 0.10);
 
-  /* Priority badges — rich jewel tones, not muddy ────────────── */
-  --badge-urgent-bg: rgba(255,  85,  85, 0.15); --badge-urgent-fg: #ff6b6b;
-  --badge-high-bg:   rgba(255, 160,  64, 0.15); --badge-high-fg:   #ffa040;
-  --badge-medium-bg: rgba(255, 204,  64, 0.15); --badge-medium-fg: #ffd048;
-  --badge-low-bg:    rgba( 64, 200, 140, 0.15); --badge-low-fg:    #40c88c;
+  /* Semantic */
+  --success:         oklch(0.68 0.15 160);
+  --success-soft:    oklch(0.68 0.15 160 / 0.15);
+  --warning:         oklch(0.75 0.15 60);
+  --warning-soft:    oklch(0.75 0.15 60 / 0.15);
+  --danger:          oklch(0.65 0.2 25);
+  --danger-soft:     oklch(0.65 0.2 25 / 0.15);
+  --info:            oklch(0.68 0.15 220);
+  --info-soft:       oklch(0.68 0.15 220 / 0.15);
 
-  /* Status badges — gentle translucent fills */
-  --status-todo-bg:     rgba(155, 164, 180, 0.12); --status-todo-fg:     #9ba4b4;
-  --status-progress-bg: rgba( 91, 141, 239, 0.14); --status-progress-fg: #7fa8f7;
-  --status-done-bg:     rgba( 64, 200, 140, 0.14); --status-done-fg:     #40c88c;
+  /* Priority badges — translucent jewel tones */
+  --badge-urgent-bg: oklch(0.65 0.2 25 / 0.18);  --badge-urgent-fg: oklch(0.7 0.18 25);
+  --badge-high-bg:   oklch(0.75 0.15 60 / 0.18); --badge-high-fg:   oklch(0.78 0.14 60);
+  --badge-medium-bg: oklch(0.78 0.13 80 / 0.18); --badge-medium-fg: oklch(0.82 0.12 80);
+  --badge-low-bg:    oklch(0.68 0.15 160 / 0.18); --badge-low-fg:   oklch(0.7 0.14 160);
 
-  /* Kanban column headers */
-  --col-todo-bg:     rgba(155, 164, 180, 0.10); --col-todo-fg:     #9ba4b4;
-  --col-progress-bg: rgba( 91, 141, 239, 0.12); --col-progress-fg: #7fa8f7;
-  --col-done-bg:     rgba( 64, 200, 140, 0.12); --col-done-fg:     #40c88c;
+  /* Status */
+  --status-todo-bg:     oklch(0.7 0.02 270 / 0.12); --status-todo-fg:     #9898a8;
+  --status-progress-bg: oklch(0.68 0.15 220 / 0.18); --status-progress-fg: oklch(0.72 0.13 220);
+  --status-done-bg:     oklch(0.68 0.15 160 / 0.18); --status-done-fg:     oklch(0.72 0.13 160);
 
-  /* Accent borders — brighter to read against dark cards */
-  --accent-blue:     #5b8def;
-  --accent-green:    #40c88c;
-  --accent-amber:    #ffd048;
-  --accent-red:      #ff6b6b;
-  --accent-dark-red: #ff5252;
+  /* Kanban */
+  --col-todo-bg:     oklch(0.7 0.02 270 / 0.10); --col-todo-fg:     #9898a8;
+  --col-progress-bg: oklch(0.68 0.15 220 / 0.15); --col-progress-fg: oklch(0.72 0.13 220);
+  --col-done-bg:     oklch(0.68 0.15 160 / 0.15); --col-done-fg:     oklch(0.72 0.13 160);
+
+  /* Accents */
+  --accent-blue:     oklch(0.65 0.2 270);
+  --accent-green:    oklch(0.68 0.15 160);
+  --accent-amber:    oklch(0.75 0.15 60);
+  --accent-red:      oklch(0.65 0.2 25);
+  --accent-dark-red: oklch(0.7 0.18 25);
 
   /* Error */
-  --error-fg: #ff6b6b;
-  --error-bg: rgba(255, 85, 85, 0.1);
-  --error-border: rgba(255, 85, 85, 0.2);
+  --error-fg: oklch(0.72 0.18 25);
+  --error-bg: oklch(0.65 0.2 25 / 0.10);
+  --error-border: oklch(0.65 0.2 25 / 0.25);
 }
 
 /* ── Reset ───────────────────────────────────────────────────────── */
@@ -107,9 +148,34 @@
 }
 
 body {
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family: 'DM Sans', -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
   background: var(--bg);
   color: var(--text-primary);
   line-height: 1.5;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   transition: background 0.3s ease, color 0.3s ease;
+}
+
+button,
+input,
+select,
+textarea {
+  font-family: inherit;
+}
+
+/* ── Custom scrollbar ───────────────────────────────────────────── */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: var(--surface3);
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: var(--text-3);
 }

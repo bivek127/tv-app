@@ -9,6 +9,7 @@ import { useKeyboardShortcuts } from './hooks/useKeyboardShortcuts';
 import TaskList from './components/TaskList';
 import TaskForm from './components/TaskForm';
 import KanbanBoard from './components/KanbanBoard';
+import CalendarView from './components/CalendarView';
 import StatsBar from './components/StatsBar';
 import DueDateBanner from './components/DueDateBanner';
 import FilterBar from './components/FilterBar';
@@ -222,14 +223,31 @@ function Dashboard() {
                   <div className="view-toggle">
                     <button className={view === 'board' ? 'active' : ''} onClick={() => setView('board')}>Board</button>
                     <button className={view === 'list' ? 'active' : ''} onClick={() => setView('list')}>List</button>
+                    <button className={view === 'calendar' ? 'active' : ''} onClick={() => setView('calendar')}>Calendar</button>
                   </div>
                 </div>
               </div>
               <ErrorBoundary title="Task view failed to load">
-                {view === 'board' ? (
+                {view === 'board' && (
                   <KanbanBoard tasks={filteredTasks} onRefresh={refreshTasks} allTasks={tasks} />
-                ) : (
+                )}
+                {view === 'list' && (
                   <TaskList tasks={filteredTasks} onRefresh={refreshTasks} allTasks={tasks} />
+                )}
+                {view === 'calendar' && (
+                  <CalendarView
+                    tasks={filteredTasks}
+                    activeProjectId={projectId}
+                    onTaskUpdate={(updated) => {
+                      if (!updated) return;
+                      setTasks((prev) => prev.map((t) => t.id === updated.id ? { ...t, ...updated } : t));
+                    }}
+                    onTaskCreate={(created) => {
+                      if (!created) return;
+                      setTasks((prev) => prev.some((t) => t.id === created.id) ? prev : [created, ...prev]);
+                    }}
+                    onRefresh={refreshTasks}
+                  />
                 )}
               </ErrorBoundary>
             </section>

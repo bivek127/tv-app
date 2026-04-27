@@ -1,109 +1,97 @@
 .due-banner {
-  border-radius: 8px;
-  border: 1px solid var(--border);
-  background: var(--card-bg);
+  border-radius: var(--radius);
+  border: 1px solid var(--danger-soft);
+  background: oklch(0.65 0.2 25 / 0.05);
   overflow: hidden;
-  transition: background 0.3s ease;
 }
 
 .due-banner-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 0.6rem 1rem;
+  padding: 0.75rem 1rem;
   cursor: pointer;
   user-select: none;
+  gap: 0.75rem;
 }
 
 .due-banner-title {
   display: flex;
   gap: 0.5rem;
   align-items: center;
+  flex: 1;
+  flex-wrap: wrap;
 }
 
 .due-pill {
-  font-size: 0.75rem;
+  font-size: 0.68rem;
   font-weight: 700;
-  padding: 0.2rem 0.6rem;
+  padding: 0.15rem 0.5rem;
   border-radius: 999px;
+  letter-spacing: 0.02em;
+  text-transform: uppercase;
 }
 
 .due-pill.overdue {
-  background: #ffebe6;
-  color: #bf2600;
+  background: var(--danger);
+  color: #fff;
 }
 
 .due-pill.today {
-  background: #fffae6;
-  color: #974f0c;
-}
-
-[data-theme="dark"] .due-pill.overdue {
-  background: rgba(191, 38, 0, 0.2);
-  color: #ff7452;
-}
-
-[data-theme="dark"] .due-pill.today {
-  background: rgba(255, 171, 0, 0.15);
-  color: #ffab00;
+  background: var(--warning);
+  color: #1a1a23;
 }
 
 .due-banner-toggle {
   font-size: 0.75rem;
-  background: none;
-  border: none;
-  color: var(--text-secondary);
+  background: transparent;
+  border: 1px solid var(--border2);
+  color: var(--text-2);
   cursor: pointer;
-  padding: 0;
+  padding: 0.3rem 0.7rem;
+  border-radius: var(--radius-sm);
+  font-weight: 600;
+  flex-shrink: 0;
+}
+
+.due-banner-toggle:hover {
+  background: var(--surface2);
+  color: var(--text-primary);
 }
 
 .due-banner-list {
   display: flex;
   flex-wrap: wrap;
   gap: 0.4rem;
-  padding: 0.5rem 1rem 0.75rem;
-  border-top: 1px solid var(--border);
+  padding: 0 1rem 0.875rem;
 }
 
 .due-task-chip {
   display: inline-flex;
   align-items: center;
   gap: 0.4rem;
-  padding: 0.3rem 0.65rem;
-  border-radius: 6px;
+  padding: 0.3rem 0.7rem;
+  border-radius: 999px;
   border: 1px solid transparent;
-  font-size: 0.8rem;
+  font-size: 0.75rem;
   cursor: pointer;
   font-family: inherit;
-  transition: opacity 0.15s;
+  font-weight: 600;
+  transition: transform 0.1s;
 }
 
 .due-task-chip:hover {
-  opacity: 0.8;
+  transform: translateY(-1px);
 }
 
 .due-task-chip.overdue {
-  background: #ffebe6;
-  color: #bf2600;
-  border-color: #ffbdad;
+  background: var(--danger-soft);
+  color: var(--danger);
 }
 
 .due-task-chip.today {
-  background: #fffae6;
-  color: #974f0c;
-  border-color: #ffe380;
-}
-
-[data-theme="dark"] .due-task-chip.overdue {
-  background: rgba(191, 38, 0, 0.15);
-  color: #ff7452;
-  border-color: rgba(191, 38, 0, 0.3);
-}
-
-[data-theme="dark"] .due-task-chip.today {
-  background: rgba(255, 171, 0, 0.1);
-  color: #ffab00;
-  border-color: rgba(255, 171, 0, 0.25);
+  background: var(--warning-soft);
+  color: var(--warning);
 }
 
 .due-chip-dot {
@@ -115,6 +103,6 @@
 }
 
 .due-chip-date {
-  font-size: 0.72rem;
-  opacity: 0.75;
+  font-size: 0.7rem;
+  opacity: 0.7;
 }
